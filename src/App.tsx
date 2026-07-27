@@ -268,7 +268,7 @@ function DashboardContent() {
           </div>
         </div>
 
-        {/* Section title & Tools Grid */}
+        {/* Section title & Tools Slider */}
         <div>
           <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4 mb-6">
             <div className="flex items-center gap-3">
@@ -279,87 +279,110 @@ function DashboardContent() {
                 {filteredTools.length} {filteredTools.length === 1 ? "Tool" : "Tools"}
               </span>
             </div>
-            <button
-              onClick={() => {
-                toast({
-                  title: "Sort complete",
-                  description: "Tools are sorted alphabetical by default.",
-                })
-              }}
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-500 dark:text-zinc-400 cursor-pointer transition-colors"
-            >
-              Sort: A to Z
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                id="slide-left"
+                onClick={() => {
+                  const el = document.getElementById("tools-slider")
+                  if (el) el.scrollBy({ left: -360, behavior: "smooth" })
+                }}
+                className="h-8 w-8 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-500 cursor-pointer transition-colors"
+              >
+                <ChevronRight className="h-4 w-4 rotate-180" />
+              </button>
+              <button
+                id="slide-right"
+                onClick={() => {
+                  const el = document.getElementById("tools-slider")
+                  if (el) el.scrollBy({ left: 360, behavior: "smooth" })
+                }}
+                className="h-8 w-8 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-500 cursor-pointer transition-colors"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-            {filteredTools.length === 0 ? (
-              <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-                <div className="h-16 w-16 rounded-2xl bg-zinc-200/60 dark:bg-zinc-800/60 flex items-center justify-center mb-4">
-                  <Search className="h-8 w-8 text-zinc-400 dark:text-zinc-500" />
-                </div>
-                <p className="text-base font-semibold text-zinc-700 dark:text-zinc-300">No tools found</p>
-                <p className="text-sm text-zinc-400 dark:text-zinc-500 mt-1">No results for <span className="font-medium text-zinc-600 dark:text-zinc-400">"{searchQuery}"</span></p>
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="mt-4 text-xs font-semibold px-4 py-2 rounded-lg bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
-                >
-                  Clear search
-                </button>
+          {filteredTools.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="h-16 w-16 rounded-2xl bg-zinc-200/60 dark:bg-zinc-800/60 flex items-center justify-center mb-4">
+                <Search className="h-8 w-8 text-zinc-400 dark:text-zinc-500" />
               </div>
-            ) : (
-              filteredTools.map((t) => (
-                <div
-                  key={t.id}
-                  onClick={() => {
-                    if (t.isActive) {
-                      openTool(t.id, t.name)
-                    } else {
-                      triggerPlaceholderToast(t.name)
-                    }
-                  }}
-                  className={`group relative flex flex-col p-5 rounded-xl border transition-all duration-200 text-left ${t.isActive
-                    ? "border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/40 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/45 cursor-pointer shadow-sm"
-                    : "border-zinc-200/50 dark:border-zinc-800/30 bg-zinc-100/20 dark:bg-zinc-900/10 cursor-not-allowed opacity-60"
-                    }`}
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <span className="text-2xl shrink-0 p-2 rounded-lg bg-zinc-200/50 dark:bg-zinc-800/60 group-hover:scale-110 transition-transform">
-                      <ToolIcon iconName={t.icon} className={`h-6 w-6 ${t.color}`} />
-                    </span>
-                    <div className="flex items-center gap-1">
-                      {t.isActive && (
-                        <button
-                          onClick={e => toggleFavorite(e, t.id)}
-                          className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/20 transition-colors cursor-pointer"
-                          title={favoritedTools.includes(t.id) ? "Remove from favorites" : "Add to favorites"}
-                        >
-                          <Star className={`h-3.5 w-3.5 transition-colors ${favoritedTools.includes(t.id) ? "text-amber-500 fill-amber-500" : "text-zinc-300 dark:text-zinc-600 group-hover:text-amber-400"}`} />
-                        </button>
-                      )}
-                      {!t.isActive && (
-                        <span className="text-[9px] font-bold tracking-wider text-zinc-400 dark:text-zinc-500 bg-zinc-200/40 dark:bg-zinc-800/30 px-2 py-0.5 rounded uppercase">
-                          Soon
-                        </span>
-                      )}
-                      {t.isActive && (
-                        <span className="text-[9px] font-bold tracking-wider text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded uppercase border border-emerald-500/10">
-                          Offline
-                        </span>
-                      )}
-                    </div>
-                  </div>
+              <p className="text-base font-semibold text-zinc-700 dark:text-zinc-300">No tools found</p>
+              <p className="text-sm text-zinc-400 dark:text-zinc-500 mt-1">No results for <span className="font-medium text-zinc-600 dark:text-zinc-400">"{searchQuery}"</span></p>
+              <button
+                onClick={() => setSearchQuery("")}
+                className="mt-4 text-xs font-semibold px-4 py-2 rounded-lg bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
+              >
+                Clear search
+              </button>
+            </div>
+          ) : (
+            // Slider wrapper with blur-edge mask
+            <div className="relative">
+              {/* Left blur edge */}
+              <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-r from-zinc-50 dark:from-zinc-950 to-transparent" />
+              {/* Right blur edge */}
+              <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-l from-zinc-50 dark:from-zinc-950 to-transparent" />
 
-                  <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
-                    {t.name}
-                  </h3>
-                  <p className="text-xs text-zinc-400 dark:text-zinc-505 mt-1 line-clamp-2 leading-relaxed">
-                    {t.desc}
-                  </p>
-                </div>
-              ))
-            )}
-          </div>
+              {/* Scrollable row */}
+              <div
+                id="tools-slider"
+                className="flex gap-3 overflow-x-auto scroll-smooth pb-4 px-2"
+                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              >
+                {filteredTools.map((t) => (
+                  <div
+                    key={t.id}
+                    onClick={() => {
+                      if (t.isActive) {
+                        openTool(t.id, t.name)
+                      } else {
+                        triggerPlaceholderToast(t.name)
+                      }
+                    }}
+                    className={`group relative flex flex-col p-5 rounded-xl border transition-all duration-200 text-left shrink-0 w-44 ${
+                      t.isActive
+                        ? "border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/40 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/45 cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                        : "border-zinc-200/50 dark:border-zinc-800/30 bg-zinc-100/20 dark:bg-zinc-900/10 cursor-not-allowed opacity-60"
+                    }`}
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <span className="shrink-0 p-2 rounded-lg bg-zinc-200/50 dark:bg-zinc-800/60 group-hover:scale-110 transition-transform inline-flex">
+                        <ToolIcon iconName={t.icon} className={`h-6 w-6 ${t.color}`} />
+                      </span>
+                      <div className="flex items-center gap-1">
+                        {t.isActive && (
+                          <button
+                            onClick={e => toggleFavorite(e, t.id)}
+                            className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/20 transition-colors cursor-pointer"
+                            title={favoritedTools.includes(t.id) ? "Remove from favorites" : "Add to favorites"}
+                          >
+                            <Star className={`h-3.5 w-3.5 transition-colors ${
+                              favoritedTools.includes(t.id) ? "text-amber-500 fill-amber-500" : "text-zinc-300 dark:text-zinc-600 group-hover:text-amber-400"
+                            }`} />
+                          </button>
+                        )}
+                        {!t.isActive && (
+                          <span className="text-[9px] font-bold tracking-wider text-zinc-400 dark:text-zinc-500 bg-zinc-200/40 dark:bg-zinc-800/30 px-1.5 py-0.5 rounded uppercase">Soon</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 leading-snug">
+                      {t.name}
+                    </h3>
+                    <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1 line-clamp-2 leading-relaxed">
+                      {t.desc}
+                    </p>
+                    {t.isActive && (
+                      <span className="mt-3 self-start text-[9px] font-bold tracking-wider text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded uppercase border border-emerald-500/10">Offline</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Bottom Banner - QR Generator */}
