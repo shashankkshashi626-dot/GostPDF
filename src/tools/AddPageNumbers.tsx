@@ -1,91 +1,97 @@
 import * as React from "react"
-import { ArrowLeft, FileUp, Loader2, Download, CheckCircle, FileText } from "lucide-react"
+import { ArrowLeft, FileUp, Loader2, Download, CheckCircle, FileText, FileDigit } from "lucide-react"
 import { Button } from "../components/ui/button"
 import { useToast } from "../components/ui/toast"
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib"
 
-interface PlaceholderWorkspaceProps {
-  toolId: string
-  toolName: string
-  toolIcon: React.ReactNode
-  toolColor: string
-  onBack: () => void
-}
-
-export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, onBack }: PlaceholderWorkspaceProps) {
+export function AddPageNumbers({ onBack }: { onBack: () => void }) {
   const [file, setFile] = React.useState<File | null>(null)
   const [isProcessing, setIsProcessing] = React.useState(false)
-  const [isDone, setIsDone] = React.useState(false)
   const [dragged, setDragged] = React.useState(false)
+  const [isDone, setIsDone] = React.useState(false)
+  const [outputBytes, setOutputBytes] = React.useState<Uint8Array | null>(null)
+  
+  // Customization
+  const [position, setPosition] = React.useState<"bottom-center" | "bottom-right" | "top-center">("bottom-center")
+  const [startNumber, setStartNumber] = React.useState<number>(1)
+  const [fontSize, setFontSize] = React.useState<number>(10)
+  
   const { toast } = useToast()
 
   const handleFileChange = (newFile: File) => {
     setFile(newFile)
     setIsDone(false)
-    toast({
-      title: "File imported",
-      description: `"${newFile.name}" has been prepared for local client-side processing.`,
-      variant: "default"
-    })
+    setOutputBytes(null)
   }
 
-  const runSimulation = () => {
+  const handleAddNumbers = async () => {
     if (!file) return
     setIsProcessing(true)
-    setTimeout(() => {
-      setIsProcessing(false)
+
+    try {
+      const fileBytes = new Uint8Array(await file.arrayBuffer())
+      const pdfDoc = await PDFDocument.load(fileBytes)
+      
+      const pages = pdfDoc.getPages()
+      const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
+      
+      pages.forEach((page, idx) => {
+        const { width, height } = page.getSize()
+        const text = String(idx + startNumber)
+        const textWidth = helveticaFont.widthOfTextAtSize(text, fontSize)
+        
+        let x = width / 2 - textWidth / 2
+        let y = 20
+        
+        if (position === "bottom-right") {
+          x = width - textWidth - 30
+        } else if (position === "top-center") {
+          x = width / 2 - textWidth / 2
+          y = height - 30
+        }
+        
+        page.drawText(text, {
+          x,
+          y,
+          size: fontSize,
+          font: helveticaFont,
+          color: rgb(0.2, 0.2, 0.2)
+        })
+      })
+
+      const modifiedBytes = await pdfDoc.save()
+      setOutputBytes(modifiedBytes)
       setIsDone(true)
+
       toast({
-        title: "Process completed",
-        description: `Successfully simulated client-side processing for ${toolName}.`,
+        title: "Page Numbers Added",
+        description: "Successfully added page numbers to the document.",
         variant: "success"
       })
-    }, 2000)
-  }
-
-  const getTargetExtension = () => {
-    const originalExt = file ? file.name.substring(file.name.lastIndexOf(".")).toLowerCase() : ".pdf"
-    switch (toolId) {
-      case "pdf2word":
-        return ".docx"
-      case "pdf2jpg":
-        return ".jpg"
-      case "pdf2epub":
-        return ".epub"
-      case "webp2png":
-      case "jfif2png":
-      case "heic2jpg":
-        return ".png"
-      case "png2svg":
-        return ".svg"
-      case "img2pdf":
-        return ".pdf"
-      default:
-        return originalExt || ".pdf"
+    } catch (err: any) {
+      console.error(err)
+      toast({
+        title: "Process Failed",
+        description: "An error occurred while adding page numbers.",
+        variant: "destructive"
+      })
+    } finally {
+      setIsProcessing(false)
     }
   }
 
-  const downloadSimulated = () => {
-    if (!file) return
-    const blob = new Blob(["Simulated file output from GhostPDF client-side processing."], { type: "application/octet-stream" })
+  const downloadResult = () => {
+    if (!outputBytes || !file) return
+    const blob = new Blob([outputBytes] as any, { type: "application/pdf" })
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")
     link.href = url
     const baseName = file.name.substring(0, file.name.lastIndexOf(".")) || file.name
-    const extension = getTargetExtension()
-    link.download = `${baseName}_${toolId}${extension}`
+    link.download = `${baseName}_numbered.pdf`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
     URL.revokeObjectURL(url)
-  }
-
-  const formatBytes = (bytes: number, decimals = 2) => {
-    if (bytes === 0) return "0 Bytes"
-    const k = 1024
-    const dm = decimals < 0 ? 0 : decimals
-    const sizes = ["Bytes", "KB", "MB", "GB"]
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
   }
 
   return (
@@ -101,15 +107,15 @@ export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, on
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div className="flex items-center gap-3">
-          <span className={`p-2 rounded-lg bg-zinc-200/50 dark:bg-zinc-850 ${toolColor}`}>
-            {toolIcon}
+          <span className="p-2 rounded-lg bg-zinc-200/50 dark:bg-zinc-850 text-cyan-500">
+            <FileDigit className="h-5 w-5" />
           </span>
           <div>
             <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50 m-0">
-              {toolName} Workspace
+              Add Page Numbers
             </h1>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-              Active local client-side processing module. No files are uploaded to any server.
+              Add customizable page numbers to your PDF document client-side.
             </p>
           </div>
         </div>
@@ -141,14 +147,15 @@ export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, on
                 <FileUp className="h-8 w-8" />
               </div>
               <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
-                Drag & drop files here
+                Drag & drop PDF document here
               </h3>
               <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1 max-w-[240px] mx-auto">
-                Select document or image to process inside this workspace.
+                Select PDF to stamp page numbers.
               </p>
               <div className="relative mt-6">
                 <input
                   type="file"
+                  accept="application/pdf"
                   onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
                       handleFileChange(e.target.files[0])
@@ -170,8 +177,8 @@ export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, on
                     <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 truncate max-w-[280px]">
                       {file.name}
                     </h4>
-                    <p className="text-xs text-zinc-400 mt-0.5">
-                      {formatBytes(file.size)} • Local File
+                    <p className="text-xs text-zinc-400 mt-0.5 font-medium">
+                      {(file.size / 1024 / 1024).toFixed(2)} MB • PDF Document
                     </p>
                   </div>
                 </div>
@@ -179,11 +186,12 @@ export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, on
                   onClick={() => {
                     setFile(null)
                     setIsDone(false)
+                    setOutputBytes(null)
                   }}
                   variant="ghost"
                   className="text-zinc-400 hover:text-red-500 hover:bg-red-500/10 cursor-pointer text-xs font-bold"
                 >
-                  Clear File
+                  Change File
                 </Button>
               </div>
 
@@ -191,28 +199,68 @@ export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, on
                 <div className="flex flex-col items-center justify-center p-8 border border-emerald-500/20 bg-emerald-500/5 rounded-xl text-center">
                   <CheckCircle className="h-10 w-10 text-emerald-500 mb-3" />
                   <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
-                    Processing Complete!
+                    Page Numbers Stamped Successfully!
                   </h4>
                   <p className="text-xs text-zinc-400 mt-1 max-w-sm">
-                    Simulated client-side document processing for {toolName} completed successfully.
+                    Numbered document is ready for download.
                   </p>
                   <Button
-                    onClick={downloadSimulated}
+                    onClick={downloadResult}
                     className="mt-6 cursor-pointer"
                   >
                     <Download className="h-4 w-4 mr-2" />
-                    Download Processed File
+                    Download Numbered PDF
                   </Button>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center p-8 border border-zinc-250/20 rounded-xl text-center">
-                  <p className="text-xs text-zinc-400 max-w-sm leading-relaxed">
-                    Click "Process Document" below to begin simulated client-side parsing of your file with the {toolName} module.
-                  </p>
+                <div className="flex flex-col gap-5 max-w-md mx-auto w-full py-2">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
+                      Page Number Position
+                    </label>
+                    <select
+                      value={position}
+                      onChange={(e) => setPosition(e.target.value as any)}
+                      className="h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500/50"
+                    >
+                      <option value="bottom-center" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50">Bottom Center</option>
+                      <option value="bottom-right" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50">Bottom Right</option>
+                      <option value="top-center" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50">Top Center</option>
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-2">
+                      <label className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
+                        Start Numbering From
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={startNumber}
+                        onChange={(e) => setStartNumber(parseInt(e.target.value) || 1)}
+                        className="h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500/50"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-xs font-bold text-zinc-800 dark:text-zinc-200">
+                        Font Size
+                      </label>
+                      <input
+                        type="number"
+                        min="6"
+                        max="24"
+                        value={fontSize}
+                        onChange={(e) => setFontSize(parseInt(e.target.value) || 10)}
+                        className="h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500/50"
+                      />
+                    </div>
+                  </div>
+
                   <Button
-                    onClick={runSimulation}
+                    onClick={handleAddNumbers}
                     disabled={isProcessing}
-                    className="mt-6 cursor-pointer"
+                    className="mt-4 cursor-pointer"
                   >
                     {isProcessing ? (
                       <>
@@ -220,9 +268,7 @@ export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, on
                         Processing...
                       </>
                     ) : (
-                      <>
-                        Start Processing
-                      </>
+                      "Apply Page Numbers"
                     )}
                   </Button>
                 </div>
@@ -238,7 +284,7 @@ export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, on
               Tool Details
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed font-medium">
-              GhostPDF operates strictly in your browser. When you run this feature, the document is parsed locally on your device without leaving your environment.
+              Adds simple, clean Helvetica text identifiers showing sequence index markers directly onto each embedded PDF page layout dynamically in your web browser.
             </p>
           </div>
         </div>

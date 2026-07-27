@@ -1,91 +1,68 @@
 import * as React from "react"
-import { ArrowLeft, FileUp, Loader2, Download, CheckCircle, FileText } from "lucide-react"
+import { ArrowLeft, FileUp, Loader2, Download, CheckCircle, FileText, Layers } from "lucide-react"
 import { Button } from "../components/ui/button"
 import { useToast } from "../components/ui/toast"
+import { PDFDocument } from "pdf-lib"
 
-interface PlaceholderWorkspaceProps {
-  toolId: string
-  toolName: string
-  toolIcon: React.ReactNode
-  toolColor: string
-  onBack: () => void
-}
-
-export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, onBack }: PlaceholderWorkspaceProps) {
+export function FlattenPdf({ onBack }: { onBack: () => void }) {
   const [file, setFile] = React.useState<File | null>(null)
   const [isProcessing, setIsProcessing] = React.useState(false)
-  const [isDone, setIsDone] = React.useState(false)
   const [dragged, setDragged] = React.useState(false)
+  const [isDone, setIsDone] = React.useState(false)
+  const [outputBytes, setOutputBytes] = React.useState<Uint8Array | null>(null)
+  
   const { toast } = useToast()
 
   const handleFileChange = (newFile: File) => {
     setFile(newFile)
     setIsDone(false)
-    toast({
-      title: "File imported",
-      description: `"${newFile.name}" has been prepared for local client-side processing.`,
-      variant: "default"
-    })
+    setOutputBytes(null)
   }
 
-  const runSimulation = () => {
+  const handleFlatten = async () => {
     if (!file) return
     setIsProcessing(true)
-    setTimeout(() => {
-      setIsProcessing(false)
+
+    try {
+      const fileBytes = new Uint8Array(await file.arrayBuffer())
+      const pdfDoc = await PDFDocument.load(fileBytes)
+      
+      const form = pdfDoc.getForm()
+      form.flatten()
+
+      const modifiedBytes = await pdfDoc.save()
+      setOutputBytes(modifiedBytes)
       setIsDone(true)
+
       toast({
-        title: "Process completed",
-        description: `Successfully simulated client-side processing for ${toolName}.`,
+        title: "PDF Flattened",
+        description: "Successfully locked form fields and flattened the document.",
         variant: "success"
       })
-    }, 2000)
-  }
-
-  const getTargetExtension = () => {
-    const originalExt = file ? file.name.substring(file.name.lastIndexOf(".")).toLowerCase() : ".pdf"
-    switch (toolId) {
-      case "pdf2word":
-        return ".docx"
-      case "pdf2jpg":
-        return ".jpg"
-      case "pdf2epub":
-        return ".epub"
-      case "webp2png":
-      case "jfif2png":
-      case "heic2jpg":
-        return ".png"
-      case "png2svg":
-        return ".svg"
-      case "img2pdf":
-        return ".pdf"
-      default:
-        return originalExt || ".pdf"
+    } catch (err: any) {
+      console.error(err)
+      toast({
+        title: "Process Failed",
+        description: "An error occurred while flattening the document.",
+        variant: "destructive"
+      })
+    } finally {
+      setIsProcessing(false)
     }
   }
 
-  const downloadSimulated = () => {
-    if (!file) return
-    const blob = new Blob(["Simulated file output from GhostPDF client-side processing."], { type: "application/octet-stream" })
+  const downloadResult = () => {
+    if (!outputBytes || !file) return
+    const blob = new Blob([outputBytes] as any, { type: "application/pdf" })
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")
     link.href = url
     const baseName = file.name.substring(0, file.name.lastIndexOf(".")) || file.name
-    const extension = getTargetExtension()
-    link.download = `${baseName}_${toolId}${extension}`
+    link.download = `${baseName}_flattened.pdf`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
     URL.revokeObjectURL(url)
-  }
-
-  const formatBytes = (bytes: number, decimals = 2) => {
-    if (bytes === 0) return "0 Bytes"
-    const k = 1024
-    const dm = decimals < 0 ? 0 : decimals
-    const sizes = ["Bytes", "KB", "MB", "GB"]
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
   }
 
   return (
@@ -101,15 +78,15 @@ export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, on
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div className="flex items-center gap-3">
-          <span className={`p-2 rounded-lg bg-zinc-200/50 dark:bg-zinc-850 ${toolColor}`}>
-            {toolIcon}
+          <span className="p-2 rounded-lg bg-zinc-200/50 dark:bg-zinc-850 text-yellow-500">
+            <Layers className="h-5 w-5" />
           </span>
           <div>
             <h1 className="text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50 m-0">
-              {toolName} Workspace
+              Flatten PDF
             </h1>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-              Active local client-side processing module. No files are uploaded to any server.
+              Lock interactive PDF form fields and compress contents client-side.
             </p>
           </div>
         </div>
@@ -141,14 +118,15 @@ export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, on
                 <FileUp className="h-8 w-8" />
               </div>
               <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
-                Drag & drop files here
+                Drag & drop PDF document here
               </h3>
               <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1 max-w-[240px] mx-auto">
-                Select document or image to process inside this workspace.
+                Lock interactive form fields to prevent further editing.
               </p>
               <div className="relative mt-6">
                 <input
                   type="file"
+                  accept="application/pdf"
                   onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
                       handleFileChange(e.target.files[0])
@@ -170,8 +148,8 @@ export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, on
                     <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 truncate max-w-[280px]">
                       {file.name}
                     </h4>
-                    <p className="text-xs text-zinc-400 mt-0.5">
-                      {formatBytes(file.size)} • Local File
+                    <p className="text-xs text-zinc-400 mt-0.5 font-medium">
+                      {(file.size / 1024 / 1024).toFixed(2)} MB • PDF Document
                     </p>
                   </div>
                 </div>
@@ -179,11 +157,12 @@ export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, on
                   onClick={() => {
                     setFile(null)
                     setIsDone(false)
+                    setOutputBytes(null)
                   }}
                   variant="ghost"
                   className="text-zinc-400 hover:text-red-500 hover:bg-red-500/10 cursor-pointer text-xs font-bold"
                 >
-                  Clear File
+                  Change File
                 </Button>
               </div>
 
@@ -191,38 +170,36 @@ export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, on
                 <div className="flex flex-col items-center justify-center p-8 border border-emerald-500/20 bg-emerald-500/5 rounded-xl text-center">
                   <CheckCircle className="h-10 w-10 text-emerald-500 mb-3" />
                   <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
-                    Processing Complete!
+                    Document Flattened Successfully!
                   </h4>
                   <p className="text-xs text-zinc-400 mt-1 max-w-sm">
-                    Simulated client-side document processing for {toolName} completed successfully.
+                    Interactive PDF fields are now read-only static layers.
                   </p>
                   <Button
-                    onClick={downloadSimulated}
+                    onClick={downloadResult}
                     className="mt-6 cursor-pointer"
                   >
                     <Download className="h-4 w-4 mr-2" />
-                    Download Processed File
+                    Download Flattened PDF
                   </Button>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center p-8 border border-zinc-250/20 rounded-xl text-center">
+                <div className="flex flex-col items-center justify-center p-8 border border-zinc-200 dark:border-zinc-800 rounded-xl text-center">
                   <p className="text-xs text-zinc-400 max-w-sm leading-relaxed">
-                    Click "Process Document" below to begin simulated client-side parsing of your file with the {toolName} module.
+                    Flattening merges the PDF form data directly into the page content stream, rendering all checkboxes, inputs, and fields uneditable.
                   </p>
                   <Button
-                    onClick={runSimulation}
+                    onClick={handleFlatten}
                     disabled={isProcessing}
                     className="mt-6 cursor-pointer"
                   >
                     {isProcessing ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                        Processing...
+                        Flattening...
                       </>
                     ) : (
-                      <>
-                        Start Processing
-                      </>
+                      "Flatten Document"
                     )}
                   </Button>
                 </div>
@@ -238,7 +215,7 @@ export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, on
               Tool Details
             </h3>
             <p className="text-xs text-zinc-400 leading-relaxed font-medium">
-              GhostPDF operates strictly in your browser. When you run this feature, the document is parsed locally on your device without leaving your environment.
+              Flattens the AcroForm form fields of the document, baking annotations, signatures, and input text permanently into the visual render path client-side.
             </p>
           </div>
         </div>
