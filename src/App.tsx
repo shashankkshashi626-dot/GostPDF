@@ -292,7 +292,7 @@ function DashboardContent() {
 
           {/* Logo */}
           <div className="flex items-center gap-3 px-2 py-1.5">
-            <img src="/logo.png" alt="GhostPDF Logo" className="h-12 w-12 object-contain rounded-lg shrink-0" />
+            <img src={theme === "dark" ? "/logo.png" : "/logo_light.png"} alt="GhostPDF Logo" className="h-12 w-12 object-contain rounded-lg shrink-0" />
             <div>
               <span className="font-extrabold text-base tracking-tight text-zinc-900 dark:text-zinc-50">Ghost</span>
               <span className="font-extrabold text-base tracking-tight text-cyan-400">PDF</span>
@@ -502,7 +502,7 @@ function DashboardContent() {
         <header className="h-14 border-b border-zinc-200 dark:border-zinc-900 px-6 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-950/50 backdrop-blur shrink-0 select-none">
           <div className="flex items-center gap-2 md:hidden">
             {/* Mobile Logo */}
-            <img src="/logo.png" alt="GhostPDF Logo" className="h-14 w-14 object-contain rounded-md shrink-0" />
+            <img src={theme === "dark" ? "/logo.png" : "/logo_light.png"} alt="GhostPDF Logo" className="h-14 w-14 object-contain rounded-md shrink-0" />
             <span className="font-extrabold text-sm tracking-tight text-zinc-950 dark:text-zinc-50">GhostPDF</span>
           </div>
 
