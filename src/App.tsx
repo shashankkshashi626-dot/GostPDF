@@ -51,6 +51,7 @@ import { UnlockPdf } from "./tools/UnlockPdf"
 import { ProtectPdf } from "./tools/ProtectPdf"
 import { AddPageNumbers } from "./tools/AddPageNumbers"
 import { FlattenPdf } from "./tools/FlattenPdf"
+import { ImageToPdf } from "./tools/ImageToPdf"
 import { PlaceholderWorkspace } from "./tools/PlaceholderWorkspace"
 
 // Interface for all tools
@@ -179,6 +180,9 @@ function DashboardContent() {
     }
     if (activeTool === "flatten") {
       return <FlattenPdf onBack={() => setActiveTool(null)} />
+    }
+    if (activeTool === "img2pdf") {
+      return <ImageToPdf onBack={() => setActiveTool(null)} />
     }
 
     if (activeTool) {
