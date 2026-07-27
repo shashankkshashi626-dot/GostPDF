@@ -1,6 +1,6 @@
 import * as React from "react"
 import {
-  Search, Moon, Sun, Info,
+  Search, Moon, Sun, Info, X,
   Settings, Star, Clock, Home,
   Files, Split, Layers, Maximize2, Unlock,
   Shield, Crop, PenTool, FileDigit, Stamp,
@@ -213,14 +213,24 @@ function DashboardContent() {
             <input
               ref={searchInputRef}
               type="text"
-              placeholder="Search tools..."
+              placeholder="Search tools... (e.g. merge, split, QR)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-12 pl-11 pr-16 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-500/50 text-sm font-medium transition-all"
+              className="w-full h-12 pl-11 pr-16 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-sm font-medium transition-all"
             />
-            <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[10px] font-semibold tracking-wide bg-zinc-200 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 px-2 py-1 rounded border border-zinc-300 dark:border-zinc-700">
-              Ctrl + /
-            </span>
+            {searchQuery ? (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 h-6 w-6 flex items-center justify-center rounded-full bg-zinc-300 dark:bg-zinc-700 hover:bg-zinc-400 dark:hover:bg-zinc-600 transition-colors cursor-pointer"
+                title="Clear search"
+              >
+                <X className="h-3.5 w-3.5 text-zinc-600 dark:text-zinc-300" />
+              </button>
+            ) : (
+              <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[10px] font-semibold tracking-wide bg-zinc-200 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 px-2 py-1 rounded border border-zinc-300 dark:border-zinc-700">
+                Ctrl + /
+              </span>
+            )}
           </div>
         </div>
 
@@ -228,9 +238,11 @@ function DashboardContent() {
         <div>
           <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4 mb-6">
             <div className="flex items-center gap-3">
-              <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50 m-0">All PDF Tools</h2>
+              <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50 m-0">
+                {searchQuery ? `Results for "${searchQuery}"` : "All PDF Tools"}
+              </h2>
               <span className="text-xs bg-zinc-200 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 px-2 py-0.5 rounded-full font-semibold text-zinc-500 dark:text-zinc-400">
-                {tools.length} Tools
+                {filteredTools.length} {filteredTools.length === 1 ? "Tool" : "Tools"}
               </span>
             </div>
             <button
@@ -247,46 +259,62 @@ function DashboardContent() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-            {filteredTools.map((t) => (
-              <div
-                key={t.id}
-                onClick={() => {
-                  if (t.isActive) {
-                    setActiveTool(t.id)
-                  } else {
-                    triggerPlaceholderToast(t.name)
-                  }
-                }}
-                className={`group relative flex flex-col p-5 rounded-xl border transition-all duration-200 text-left ${t.isActive
-                  ? "border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/40 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/45 cursor-pointer shadow-sm"
-                  : "border-zinc-200/50 dark:border-zinc-800/30 bg-zinc-100/20 dark:bg-zinc-900/10 cursor-not-allowed opacity-60"
-                  }`}
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <span className="text-2xl shrink-0 p-2 rounded-lg bg-zinc-200/50 dark:bg-zinc-800/60 group-hover:scale-110 transition-transform">
-                    <ToolIcon iconName={t.icon} className={`h-6 w-6 ${t.color}`} />
-                  </span>
-
-                  {!t.isActive && (
-                    <span className="text-[9px] font-bold tracking-wider text-zinc-400 dark:text-zinc-500 bg-zinc-200/40 dark:bg-zinc-800/30 px-2 py-0.5 rounded uppercase">
-                      Soon
-                    </span>
-                  )}
-                  {t.isActive && (
-                    <span className="text-[9px] font-bold tracking-wider text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded uppercase border border-emerald-500/10">
-                      Offline
-                    </span>
-                  )}
+            {filteredTools.length === 0 ? (
+              <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                <div className="h-16 w-16 rounded-2xl bg-zinc-200/60 dark:bg-zinc-800/60 flex items-center justify-center mb-4">
+                  <Search className="h-8 w-8 text-zinc-400 dark:text-zinc-500" />
                 </div>
-
-                <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
-                  {t.name}
-                </h3>
-                <p className="text-xs text-zinc-400 dark:text-zinc-505 mt-1 line-clamp-2 leading-relaxed">
-                  {t.desc}
-                </p>
+                <p className="text-base font-semibold text-zinc-700 dark:text-zinc-300">No tools found</p>
+                <p className="text-sm text-zinc-400 dark:text-zinc-500 mt-1">No results for <span className="font-medium text-zinc-600 dark:text-zinc-400">"{searchQuery}"</span></p>
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="mt-4 text-xs font-semibold px-4 py-2 rounded-lg bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
+                >
+                  Clear search
+                </button>
               </div>
-            ))}
+            ) : (
+              filteredTools.map((t) => (
+                <div
+                  key={t.id}
+                  onClick={() => {
+                    if (t.isActive) {
+                      setActiveTool(t.id)
+                    } else {
+                      triggerPlaceholderToast(t.name)
+                    }
+                  }}
+                  className={`group relative flex flex-col p-5 rounded-xl border transition-all duration-200 text-left ${t.isActive
+                    ? "border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/40 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/45 cursor-pointer shadow-sm"
+                    : "border-zinc-200/50 dark:border-zinc-800/30 bg-zinc-100/20 dark:bg-zinc-900/10 cursor-not-allowed opacity-60"
+                    }`}
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <span className="text-2xl shrink-0 p-2 rounded-lg bg-zinc-200/50 dark:bg-zinc-800/60 group-hover:scale-110 transition-transform">
+                      <ToolIcon iconName={t.icon} className={`h-6 w-6 ${t.color}`} />
+                    </span>
+
+                    {!t.isActive && (
+                      <span className="text-[9px] font-bold tracking-wider text-zinc-400 dark:text-zinc-500 bg-zinc-200/40 dark:bg-zinc-800/30 px-2 py-0.5 rounded uppercase">
+                        Soon
+                      </span>
+                    )}
+                    {t.isActive && (
+                      <span className="text-[9px] font-bold tracking-wider text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded uppercase border border-emerald-500/10">
+                        Offline
+                      </span>
+                    )}
+                  </div>
+
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
+                    {t.name}
+                  </h3>
+                  <p className="text-xs text-zinc-400 dark:text-zinc-505 mt-1 line-clamp-2 leading-relaxed">
+                    {t.desc}
+                  </p>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
