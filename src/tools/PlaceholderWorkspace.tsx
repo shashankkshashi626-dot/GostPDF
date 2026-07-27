@@ -2,6 +2,7 @@ import * as React from "react"
 import { ArrowLeft, FileUp, Loader2, Download, CheckCircle, FileText } from "lucide-react"
 import { Button } from "../components/ui/button"
 import { useToast } from "../components/ui/toast"
+import { PDFDocument } from "pdf-lib"
 
 interface PlaceholderWorkspaceProps {
   toolId: string
@@ -64,14 +65,33 @@ export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, on
     }
   }
 
-  const downloadSimulated = () => {
+  const downloadSimulated = async () => {
     if (!file) return
-    const blob = new Blob(["Simulated file output from GhostPDF client-side processing."], { type: "application/octet-stream" })
+    const extension = getTargetExtension()
+    
+    let blob: Blob | File = file
+    if (extension === ".pdf") {
+      if (file.name.toLowerCase().endsWith(".pdf")) {
+        blob = file
+      } else {
+        try {
+          const dummyPdf = await PDFDocument.create()
+          dummyPdf.addPage([595, 842])
+          const dummyBytes = await dummyPdf.save()
+          blob = new Blob([dummyBytes] as any, { type: "application/pdf" })
+        } catch (e) {
+          // Fallback to minimal valid PDF structure string
+          blob = new Blob(["%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] >>\nendobj\nxref\n0 4\n0000000000 65535 f\n0000000010 00000 n\n0000000060 00000 n\n0000000120 00000 n\ntrailer\n<< /Size 4 /Root 1 0 R >>\nstartxref\n190\n%%EOF"], { type: "application/pdf" })
+        }
+      }
+    } else {
+      blob = new Blob(["Simulated content conversion output from GhostPDF client-side processing."], { type: "application/octet-stream" })
+    }
+
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")
     link.href = url
     const baseName = file.name.substring(0, file.name.lastIndexOf(".")) || file.name
-    const extension = getTargetExtension()
     link.download = `${baseName}_${toolId}${extension}`
     document.body.appendChild(link)
     link.click()
