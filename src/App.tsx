@@ -47,6 +47,7 @@ import { OrganizePdf } from "./tools/OrganizePdf"
 import { CompressPdf } from "./tools/CompressPdf"
 import { ResizePdf } from "./tools/ResizePdf"
 import { QrGenerator } from "./tools/QrGenerator"
+import { PlaceholderWorkspace } from "./tools/PlaceholderWorkspace"
 
 // Interface for all tools
 interface ToolItem {
@@ -82,39 +83,39 @@ function DashboardContent() {
   const tools: ToolItem[] = [
     { id: "merge", name: "Merge PDF", desc: "(Drag & Drop Reorder) 🧩", icon: "files", emoji: "🧩", color: "text-emerald-500", isActive: true },
     { id: "split", name: "Split PDF", desc: "(Range, Extract) ✂️", icon: "split", emoji: "✂️", color: "text-blue-500", isActive: true },
-    { id: "flatten", name: "Flatten PDF", desc: "(Local) ⚡", icon: "layers", emoji: "⚡", color: "text-yellow-500", isActive: false },
+    { id: "flatten", name: "Flatten PDF", desc: "(Local) ⚡", icon: "layers", emoji: "⚡", color: "text-yellow-500", isActive: true },
     { id: "resize", name: "Resize PDF", desc: "(Local) 📥", icon: "maximize2", emoji: "📥", color: "text-sky-500", isActive: true },
-    { id: "unlock", name: "Unlock PDF", desc: "(with password) 🔑", icon: "unlock", emoji: "🔑", color: "text-amber-500", isActive: false },
-    { id: "protect", name: "Protect PDF", desc: "(Password/Encryption) 🛡️", icon: "shield", emoji: "🛡️", color: "text-indigo-500", isActive: false },
-    { id: "crop", name: "Crop PDF", desc: "(Local) ✂️", icon: "crop", emoji: "✂️", color: "text-red-500", isActive: false },
-    { id: "sign", name: "Sign PDF", desc: "(Local Signature Draw) ✍️", icon: "pentool", emoji: "✍️", color: "text-teal-500", isActive: false },
-    { id: "pagenum", name: "Add Page Numbers", desc: "123", icon: "filedigit", emoji: "🔢", color: "text-cyan-500", isActive: false },
-    { id: "watermark", name: "Add Watermark", desc: "💧", icon: "stamp", emoji: "💧", color: "text-blue-400", isActive: false },
-    { id: "ocr", name: "OCR", desc: "(Local with Tesseract.js) 👀", icon: "scantext", emoji: "👀", color: "text-rose-500", isActive: false },
+    { id: "unlock", name: "Unlock PDF", desc: "(with password) 🔑", icon: "unlock", emoji: "🔑", color: "text-amber-500", isActive: true },
+    { id: "protect", name: "Protect PDF", desc: "(Password/Encryption) 🛡️", icon: "shield", emoji: "🛡️", color: "text-indigo-500", isActive: true },
+    { id: "crop", name: "Crop PDF", desc: "(Local) ✂️", icon: "crop", emoji: "✂️", color: "text-red-500", isActive: true },
+    { id: "sign", name: "Sign PDF", desc: "(Local Signature Draw) ✍️", icon: "pentool", emoji: "✍️", color: "text-teal-500", isActive: true },
+    { id: "pagenum", name: "Add Page Numbers", desc: "123", icon: "filedigit", emoji: "🔢", color: "text-cyan-500", isActive: true },
+    { id: "watermark", name: "Add Watermark", desc: "💧", icon: "stamp", emoji: "💧", color: "text-blue-400", isActive: true },
+    { id: "ocr", name: "OCR", desc: "(Local with Tesseract.js) 👀", icon: "scantext", emoji: "👀", color: "text-rose-500", isActive: true },
     { id: "compress", name: "Compress PDF", desc: "(Canvas Render, Quality Slider) ✨", icon: "filedown", emoji: "✨", color: "text-purple-500", isActive: true },
-    { id: "img2pdf", name: "Image to PDF", desc: "(JPG/PNG Local) 🖼️", icon: "fileimage", emoji: "🖼️", color: "text-emerald-400", isActive: false },
-    { id: "pdf2word", name: "PDF to Word", desc: "(DOCX difficult, with warning) ⚠️", icon: "filetext", emoji: "⚠️", color: "text-red-400", isActive: false },
-    { id: "pdf2jpg", name: "PDF to JPG", desc: "(Local) 🖼️", icon: "fileimage", emoji: "🖼️", color: "text-pink-500", isActive: false },
-    { id: "pdf2epub", name: "PDF to EPUB", desc: "(Local) 📚", icon: "bookopen", emoji: "📚", color: "text-violet-500", isActive: false },
-    { id: "webp2png", name: "WEBP to PNG", desc: "(Local) 🔄", icon: "refreshcw", emoji: "🔄", color: "text-sky-400", isActive: false },
-    { id: "jfif2png", name: "JFIF to PNG", desc: "(Local) 🔄", icon: "refreshcw", emoji: "🔄", color: "text-indigo-400", isActive: false },
-    { id: "png2svg", name: "PNG to SVG", desc: "(Local) 🎨", icon: "refreshcw", emoji: "🎨", color: "text-yellow-400", isActive: false },
-    { id: "heic2jpg", name: "HEIC to JPG/PNG", desc: "(Local) 📸", icon: "refreshcw", emoji: "📸", color: "text-blue-600", isActive: false },
-    { id: "imageresize", name: "Image Resizer", desc: "(with caution for enlarged quality) ⚠️", icon: "image", emoji: "⚠️", color: "text-amber-600", isActive: false },
-    { id: "cropimage", name: "Crop Image", desc: "(Local) ✂️", icon: "crop", emoji: "✂️", color: "text-red-600", isActive: false },
-    { id: "unitconv", name: "Unit Converter", desc: "(Local) ⚖️", icon: "arrowleftright", emoji: "⚖️", color: "text-slate-500", isActive: false },
-    { id: "timeconv", name: "Time Converter", desc: "(Local) 🕒", icon: "clock", emoji: "🕒", color: "text-slate-500", isActive: false }
+    { id: "img2pdf", name: "Image to PDF", desc: "(JPG/PNG Local) 🖼️", icon: "fileimage", emoji: "🖼️", color: "text-emerald-400", isActive: true },
+    { id: "pdf2word", name: "PDF to Word", desc: "(DOCX difficult, with warning) ⚠️", icon: "filetext", emoji: "⚠️", color: "text-red-400", isActive: true },
+    { id: "pdf2jpg", name: "PDF to JPG", desc: "(Local) 🖼️", icon: "fileimage", emoji: "🖼️", color: "text-pink-500", isActive: true },
+    { id: "pdf2epub", name: "PDF to EPUB", desc: "(Local) 📚", icon: "bookopen", emoji: "📚", color: "text-violet-500", isActive: true },
+    { id: "webp2png", name: "WEBP to PNG", desc: "(Local) 🔄", icon: "refreshcw", emoji: "🔄", color: "text-sky-400", isActive: true },
+    { id: "jfif2png", name: "JFIF to PNG", desc: "(Local) 🔄", icon: "refreshcw", emoji: "🔄", color: "text-indigo-400", isActive: true },
+    { id: "png2svg", name: "PNG to SVG", desc: "(Local) 🎨", icon: "refreshcw", emoji: "🎨", color: "text-yellow-400", isActive: true },
+    { id: "heic2jpg", name: "HEIC to JPG/PNG", desc: "(Local) 📸", icon: "refreshcw", emoji: "📸", color: "text-blue-600", isActive: true },
+    { id: "imageresize", name: "Image Resizer", desc: "(with caution for enlarged quality) ⚠️", icon: "image", emoji: "⚠️", color: "text-amber-600", isActive: true },
+    { id: "cropimage", name: "Crop Image", desc: "(Local) ✂️", icon: "crop", emoji: "✂️", color: "text-red-600", isActive: true },
+    { id: "unitconv", name: "Unit Converter", desc: "(Local) ⚖️", icon: "arrowleftright", emoji: "⚖️", color: "text-slate-500", isActive: true },
+    { id: "timeconv", name: "Time Converter", desc: "(Local) 🕒", icon: "clock", emoji: "🕒", color: "text-slate-500", isActive: true }
   ]
 
   const pdfMenuTools = [
     { id: "merge", name: "Merge PDF", emoji: "🧩", icon: "files", color: "text-emerald-500", isActive: true },
     { id: "split", name: "Split PDF", emoji: "✂️", icon: "split", color: "text-blue-500", isActive: true },
     { id: "compress", name: "Compress PDF", emoji: "✨", icon: "filedown", color: "text-purple-500", isActive: true },
-    { id: "ocr", name: "OCR (Text Recognition)", emoji: "👀", icon: "scantext", color: "text-rose-500", isActive: false },
-    { id: "convert", name: "Convert PDF", emoji: "🔄", icon: "refreshcw", color: "text-sky-500", isActive: false },
-    { id: "organize", name: "Organize Pages", emoji: "📄", icon: "layers", color: "text-orange-500", isActive: false },
-    { id: "security", name: "Security (Lock/Unlock)", emoji: "🔒", icon: "shield", color: "text-indigo-500", isActive: false },
-    { id: "sign", name: "Sign PDF", emoji: "✍️", icon: "pentool", color: "text-teal-500", isActive: false }
+    { id: "ocr", name: "OCR (Text Recognition)", emoji: "👀", icon: "scantext", color: "text-rose-500", isActive: true },
+    { id: "convert", name: "Convert PDF", emoji: "🔄", icon: "refreshcw", color: "text-sky-500", isActive: true },
+    { id: "organize", name: "Organize Pages", emoji: "📄", icon: "layers", color: "text-orange-500", isActive: true },
+    { id: "security", name: "Security (Lock/Unlock)", emoji: "🔒", icon: "shield", color: "text-indigo-500", isActive: true },
+    { id: "sign", name: "Sign PDF", emoji: "✍️", icon: "pentool", color: "text-teal-500", isActive: true }
   ]
 
   // Filter tools by search query
@@ -162,6 +163,21 @@ function DashboardContent() {
     }
     if (activeTool === "qrgenerator") {
       return <QrGenerator onBack={() => setActiveTool(null)} />
+    }
+
+    if (activeTool) {
+      const currentTool = tools.find(t => t.id === activeTool)
+      if (currentTool) {
+        return (
+          <PlaceholderWorkspace
+            toolId={currentTool.id}
+            toolName={currentTool.name}
+            toolIcon={<ToolIcon iconName={currentTool.icon} />}
+            toolColor={currentTool.color}
+            onBack={() => setActiveTool(null)}
+          />
+        )
+      }
     }
 
     return (
