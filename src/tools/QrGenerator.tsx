@@ -329,11 +329,11 @@ export function QrGenerator({ onBack }: { onBack: () => void }) {
                     <select
                       value={wifiSecurity}
                       onChange={(e) => setWifiSecurity(e.target.value as any)}
-                      className="h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500/50"
+                      className="h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500/50"
                     >
-                      <option value="WPA">WPA / WPA2</option>
-                      <option value="WEP">WEP</option>
-                      <option value="nopass">Unsecured (No Password)</option>
+                      <option value="WPA" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50">WPA / WPA2</option>
+                      <option value="WEP" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50">WEP</option>
+                      <option value="nopass" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50">Unsecured (No Password)</option>
                     </select>
                   </div>
                   {wifiSecurity !== "nopass" && (
@@ -545,12 +545,12 @@ export function QrGenerator({ onBack }: { onBack: () => void }) {
                 <select
                   value={errorCorrection}
                   onChange={(e) => setErrorCorrection(e.target.value as any)}
-                  className="h-9 px-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-xs focus:outline-none font-semibold focus:ring-2 focus:ring-zinc-500/50"
+                  className="h-9 px-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 text-xs focus:outline-none font-semibold focus:ring-2 focus:ring-zinc-500/50"
                 >
-                  <option value="L">Low (7% recovery - best for clean/simple QR)</option>
-                  <option value="M">Medium (15% recovery)</option>
-                  <option value="Q">Quartile (25% recovery)</option>
-                  <option value="H">High (30% recovery - recommended with logos)</option>
+                  <option value="L" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50">Low (7% recovery - best for clean/simple QR)</option>
+                  <option value="M" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50">Medium (15% recovery)</option>
+                  <option value="Q" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50">Quartile (25% recovery)</option>
+                  <option value="H" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50">High (30% recovery - recommended with logos)</option>
                 </select>
               </div>
 

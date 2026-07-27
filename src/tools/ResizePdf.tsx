@@ -278,12 +278,12 @@ export function ResizePdf({ onBack }: { onBack: () => void }) {
                     <select
                       value={pageSizePreset}
                       onChange={(e) => setPageSizePreset(e.target.value as any)}
-                      className="h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-905 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500/50"
+                      className="h-10 px-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500/50"
                     >
-                      <option value="a4">A4 (595 x 842 pt)</option>
-                      <option value="letter">US Letter (612 x 792 pt)</option>
-                      <option value="a3">A3 (842 x 1190 pt)</option>
-                      <option value="a5">A5 (420 x 595 pt)</option>
+                      <option value="a4" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50">A4 (595 x 842 pt)</option>
+                      <option value="letter" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50">US Letter (612 x 792 pt)</option>
+                      <option value="a3" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50">A3 (842 x 1190 pt)</option>
+                      <option value="a5" className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50">A5 (420 x 595 pt)</option>
                     </select>
                   </div>
                 ) : (
