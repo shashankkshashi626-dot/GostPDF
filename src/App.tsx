@@ -46,6 +46,7 @@ import { SplitPdf } from "./tools/SplitPdf"
 import { OrganizePdf } from "./tools/OrganizePdf"
 import { CompressPdf } from "./tools/CompressPdf"
 import { ResizePdf } from "./tools/ResizePdf"
+import { QrGenerator } from "./tools/QrGenerator"
 
 // Interface for all tools
 interface ToolItem {
@@ -159,6 +160,9 @@ function DashboardContent() {
     if (activeTool === "resize") {
       return <ResizePdf onBack={() => setActiveTool(null)} />
     }
+    if (activeTool === "qrgenerator") {
+      return <QrGenerator onBack={() => setActiveTool(null)} />
+    }
 
     return (
       <div className="flex-1 py-8 px-6 md:px-12 max-w-7xl mx-auto w-full animate-in fade-in duration-300">
@@ -256,7 +260,7 @@ function DashboardContent() {
 
         {/* Bottom Banner - QR Generator */}
         <div
-          onClick={() => triggerPlaceholderToast("QR Generator")}
+          onClick={() => setActiveTool("qrgenerator")}
           className="mt-8 p-4 rounded-xl border border-zinc-200 dark:border-zinc-850 hover:border-zinc-400 dark:hover:border-zinc-600 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/40 flex items-center justify-between cursor-pointer transition-all duration-200 shadow-sm"
         >
           <div className="flex items-center gap-4">
@@ -406,7 +410,7 @@ function DashboardContent() {
               {expandedMenus["utilities"] && (
                 <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
                   <button
-                    onClick={() => triggerPlaceholderToast("QR Generator")}
+                    onClick={() => setActiveTool("qrgenerator")}
                     className="flex items-center justify-between w-full px-2 py-1 rounded-md text-xs font-medium text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-300 cursor-pointer text-left"
                   >
                     <span>QR Generator</span>
