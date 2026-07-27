@@ -585,8 +585,14 @@ function DashboardContent() {
             </div>
           </div>
 
-          {/* Collapsible Accordion Navigation */}
-          <nav className="flex flex-col gap-1 overflow-y-auto max-h-[380px] pr-1 scrollbar-thin">
+          {/* Collapsible Accordion Navigation — with blur-fade scroll edges */}
+          <div className="relative">
+            {/* Top fade */}
+            <div className="pointer-events-none absolute top-0 left-0 right-0 h-6 z-10 bg-gradient-to-b from-white/80 dark:from-zinc-950/80 to-transparent" />
+            {/* Bottom fade */}
+            <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 z-10 bg-gradient-to-t from-white/90 dark:from-zinc-950/90 to-transparent" />
+
+          <nav className="flex flex-col gap-1 overflow-y-auto max-h-[420px] pr-1 py-2" style={{ scrollbarWidth: "none" }}>
             {/* Home */}
             <button
               onClick={() => { setActiveTool(null); setActiveMenu("all-tools"); }}
@@ -862,6 +868,7 @@ function DashboardContent() {
               </button>
             </div>
           </nav>
+          </div>
         </div>
 
         {/* Upgrade Pro Widget */}
@@ -874,7 +881,7 @@ function DashboardContent() {
           </p>
           <Button
             onClick={() => toast({ title: "Upgrade Pro", description: "Stripe payment integration coming soon." })}
-            className="w-full mt-3 h-8 text-xs font-bold gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg cursor-pointer border-none shadow-sm shadow-blue-500/20"
+            className="w-full mt-3 h-8 text-xs font-bold gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-orange-500 dark:to-amber-500 dark:hover:from-orange-600 dark:hover:to-amber-600 text-white rounded-lg cursor-pointer border-none shadow-sm shadow-blue-500/20 dark:shadow-orange-500/20"
           >
             Upgrade Now 💎
           </Button>
