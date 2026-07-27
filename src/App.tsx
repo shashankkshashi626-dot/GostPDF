@@ -74,6 +74,36 @@ function DashboardContent() {
   const [activeMenu, setActiveMenu] = React.useState("all-tools")
   const searchInputRef = React.useRef<HTMLInputElement>(null)
 
+  // Favourites — stored in localStorage
+  const [favoritedTools, setFavoritedTools] = React.useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem("ghostpdf_favorites") || "[]") } catch { return [] }
+  })
+
+  // Recent activity — { id, name, timestamp }[]
+  const [recentActivity, setRecentActivity] = React.useState<{ id: string; name: string; ts: number }[]>(() => {
+    try { return JSON.parse(localStorage.getItem("ghostpdf_recent") || "[]") } catch { return [] }
+  })
+
+  const openTool = (id: string, name: string) => {
+    setActiveTool(id)
+    setActiveMenu("all-tools")
+    const entry = { id, name, ts: Date.now() }
+    setRecentActivity(prev => {
+      const updated = [entry, ...prev.filter(r => r.id !== id)].slice(0, 20)
+      localStorage.setItem("ghostpdf_recent", JSON.stringify(updated))
+      return updated
+    })
+  }
+
+  const toggleFavorite = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    setFavoritedTools(prev => {
+      const next = prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
+      localStorage.setItem("ghostpdf_favorites", JSON.stringify(next))
+      return next
+    })
+  }
+
   // Collapsible accordion states
   const [expandedMenus, setExpandedMenus] = React.useState<Record<string, boolean>>({
     "pdf-tools": true,
@@ -283,7 +313,7 @@ function DashboardContent() {
                   key={t.id}
                   onClick={() => {
                     if (t.isActive) {
-                      setActiveTool(t.id)
+                      openTool(t.id, t.name)
                     } else {
                       triggerPlaceholderToast(t.name)
                     }
@@ -297,17 +327,27 @@ function DashboardContent() {
                     <span className="text-2xl shrink-0 p-2 rounded-lg bg-zinc-200/50 dark:bg-zinc-800/60 group-hover:scale-110 transition-transform">
                       <ToolIcon iconName={t.icon} className={`h-6 w-6 ${t.color}`} />
                     </span>
-
-                    {!t.isActive && (
-                      <span className="text-[9px] font-bold tracking-wider text-zinc-400 dark:text-zinc-500 bg-zinc-200/40 dark:bg-zinc-800/30 px-2 py-0.5 rounded uppercase">
-                        Soon
-                      </span>
-                    )}
-                    {t.isActive && (
-                      <span className="text-[9px] font-bold tracking-wider text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded uppercase border border-emerald-500/10">
-                        Offline
-                      </span>
-                    )}
+                    <div className="flex items-center gap-1">
+                      {t.isActive && (
+                        <button
+                          onClick={e => toggleFavorite(e, t.id)}
+                          className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/20 transition-colors cursor-pointer"
+                          title={favoritedTools.includes(t.id) ? "Remove from favorites" : "Add to favorites"}
+                        >
+                          <Star className={`h-3.5 w-3.5 transition-colors ${favoritedTools.includes(t.id) ? "text-amber-500 fill-amber-500" : "text-zinc-300 dark:text-zinc-600 group-hover:text-amber-400"}`} />
+                        </button>
+                      )}
+                      {!t.isActive && (
+                        <span className="text-[9px] font-bold tracking-wider text-zinc-400 dark:text-zinc-500 bg-zinc-200/40 dark:bg-zinc-800/30 px-2 py-0.5 rounded uppercase">
+                          Soon
+                        </span>
+                      )}
+                      {t.isActive && (
+                        <span className="text-[9px] font-bold tracking-wider text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded uppercase border border-emerald-500/10">
+                          Offline
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">
@@ -570,29 +610,47 @@ function DashboardContent() {
 
             {/* Independent Navigation */}
             <button
-              onClick={() => toast({ title: "Recent Files", description: "No files processed in this session." })}
-              className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+              onClick={() => { setActiveMenu("recent"); setActiveTool(null) }}
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all ${
+                activeMenu === "recent"
+                  ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 border border-zinc-300 dark:border-zinc-800"
+                  : "text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 border border-transparent"
+              }`}
             >
               <Clock className="h-4 w-4" />
               Recent Files
+              {recentActivity.length > 0 && (
+                <span className="ml-auto text-[10px] font-bold bg-zinc-300 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 px-1.5 py-0.5 rounded-full">{recentActivity.length}</span>
+              )}
             </button>
             <button
-              onClick={() => toast({ title: "Favorites", description: "You haven't favorited any tools yet." })}
-              className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+              onClick={() => { setActiveMenu("favorites"); setActiveTool(null) }}
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all ${
+                activeMenu === "favorites"
+                  ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 border border-zinc-300 dark:border-zinc-800"
+                  : "text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 border border-transparent"
+              }`}
             >
-              <Star className="h-4 w-4" />
+              <Star className={`h-4 w-4 ${favoritedTools.length > 0 ? "text-amber-500 fill-amber-500" : ""}`} />
               Favorites
+              {favoritedTools.length > 0 && (
+                <span className="ml-auto text-[10px] font-bold bg-amber-400/20 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-full">{favoritedTools.length}</span>
+              )}
             </button>
             <button
               onClick={() => toast({ title: "Cloud Storage", description: "Connect to Google Drive or Dropbox." })}
-              className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+              className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all border border-transparent"
             >
               <Cloud className="h-4 w-4" />
               Cloud Storage
             </button>
             <button
-              onClick={() => toast({ title: "Templates", description: "Choose from pre-made PDF layout templates." })}
-              className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+              onClick={() => { setActiveMenu("templates"); setActiveTool(null) }}
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all ${
+                activeMenu === "templates"
+                  ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 border border-zinc-300 dark:border-zinc-800"
+                  : "text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 border border-transparent"
+              }`}
             >
               <FileText className="h-4 w-4" />
               Templates
