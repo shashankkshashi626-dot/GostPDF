@@ -47,6 +47,8 @@ import { OrganizePdf } from "./tools/OrganizePdf"
 import { CompressPdf } from "./tools/CompressPdf"
 import { ResizePdf } from "./tools/ResizePdf"
 import { QrGenerator } from "./tools/QrGenerator"
+import { UnlockPdf } from "./tools/UnlockPdf"
+import { ProtectPdf } from "./tools/ProtectPdf"
 import { PlaceholderWorkspace } from "./tools/PlaceholderWorkspace"
 
 // Interface for all tools
@@ -163,6 +165,12 @@ function DashboardContent() {
     }
     if (activeTool === "qrgenerator") {
       return <QrGenerator onBack={() => setActiveTool(null)} />
+    }
+    if (activeTool === "unlock") {
+      return <UnlockPdf onBack={() => setActiveTool(null)} />
+    }
+    if (activeTool === "protect") {
+      return <ProtectPdf onBack={() => setActiveTool(null)} />
     }
 
     if (activeTool) {
