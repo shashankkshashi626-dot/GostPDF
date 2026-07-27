@@ -45,6 +45,7 @@ import { MergePdf } from "./tools/MergePdf"
 import { SplitPdf } from "./tools/SplitPdf"
 import { OrganizePdf } from "./tools/OrganizePdf"
 import { CompressPdf } from "./tools/CompressPdf"
+import { ResizePdf } from "./tools/ResizePdf"
 
 // Interface for all tools
 interface ToolItem {
@@ -81,7 +82,7 @@ function DashboardContent() {
     { id: "merge", name: "Merge PDF", desc: "(Drag & Drop Reorder) 🧩", icon: "files", emoji: "🧩", color: "text-emerald-500", isActive: true },
     { id: "split", name: "Split PDF", desc: "(Range, Extract) ✂️", icon: "split", emoji: "✂️", color: "text-blue-500", isActive: true },
     { id: "flatten", name: "Flatten PDF", desc: "(Local) ⚡", icon: "layers", emoji: "⚡", color: "text-yellow-500", isActive: false },
-    { id: "resize", name: "Resize PDF", desc: "(Local) 📥", icon: "maximize2", emoji: "📥", color: "text-sky-500", isActive: false },
+    { id: "resize", name: "Resize PDF", desc: "(Local) 📥", icon: "maximize2", emoji: "📥", color: "text-sky-500", isActive: true },
     { id: "unlock", name: "Unlock PDF", desc: "(with password) 🔑", icon: "unlock", emoji: "🔑", color: "text-amber-500", isActive: false },
     { id: "protect", name: "Protect PDF", desc: "(Password/Encryption) 🛡️", icon: "shield", emoji: "🛡️", color: "text-indigo-500", isActive: false },
     { id: "crop", name: "Crop PDF", desc: "(Local) ✂️", icon: "crop", emoji: "✂️", color: "text-red-500", isActive: false },
@@ -154,6 +155,9 @@ function DashboardContent() {
     }
     if (activeTool === "compress") {
       return <CompressPdf onBack={() => setActiveTool(null)} />
+    }
+    if (activeTool === "resize") {
+      return <ResizePdf onBack={() => setActiveTool(null)} />
     }
 
     return (
