@@ -499,11 +499,10 @@ function DashboardContent() {
                         triggerPlaceholderToast(t.name)
                       }
                     }}
-                    className={`group relative flex flex-col p-5 rounded-xl border transition-all duration-200 text-left shrink-0 w-44 ${
-                      t.isActive
-                        ? "border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/40 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/45 cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-0.5"
-                        : "border-zinc-200/50 dark:border-zinc-800/30 bg-zinc-100/20 dark:bg-zinc-900/10 cursor-not-allowed opacity-60"
-                    }`}
+                    className={`group relative flex flex-col p-5 rounded-xl border transition-all duration-200 text-left shrink-0 w-44 ${t.isActive
+                      ? "border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/40 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/45 cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                      : "border-zinc-200/50 dark:border-zinc-800/30 bg-zinc-100/20 dark:bg-zinc-900/10 cursor-not-allowed opacity-60"
+                      }`}
                   >
                     <div className="flex justify-between items-start mb-4">
                       <span className="shrink-0 p-2 rounded-lg bg-zinc-200/50 dark:bg-zinc-800/60 group-hover:scale-110 transition-transform inline-flex">
@@ -516,9 +515,8 @@ function DashboardContent() {
                             className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/20 transition-colors cursor-pointer"
                             title={favoritedTools.includes(t.id) ? "Remove from favorites" : "Add to favorites"}
                           >
-                            <Star className={`h-3.5 w-3.5 transition-colors ${
-                              favoritedTools.includes(t.id) ? "text-amber-500 fill-amber-500" : "text-zinc-300 dark:text-zinc-600 group-hover:text-amber-400"
-                            }`} />
+                            <Star className={`h-3.5 w-3.5 transition-colors ${favoritedTools.includes(t.id) ? "text-amber-500 fill-amber-500" : "text-zinc-300 dark:text-zinc-600 group-hover:text-amber-400"
+                              }`} />
                           </button>
                         )}
                         {!t.isActive && (
@@ -592,282 +590,276 @@ function DashboardContent() {
             {/* Bottom fade */}
             <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 z-10 bg-gradient-to-t from-white/90 dark:from-zinc-950/90 to-transparent" />
 
-          <nav className="flex flex-col gap-1 overflow-y-auto max-h-[420px] pr-1 py-2" style={{ scrollbarWidth: "none" }}>
-            {/* Home */}
-            <button
-              onClick={() => { setActiveTool(null); setActiveMenu("all-tools"); }}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer ${activeMenu === "all-tools" && !activeTool
-                ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-950 dark:text-zinc-50 border border-zinc-300 dark:border-zinc-800"
-                : "text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 border border-transparent"
-                }`}
-            >
-              <Home className="h-4 w-4 text-emerald-500" />
-              <span>Home 🏠</span>
-            </button>
-
-            {/* PDF Tools Dropdown */}
-            <div>
+            <nav className="flex flex-col gap-1 overflow-y-auto max-h-[420px] pr-1 py-2" style={{ scrollbarWidth: "none" }}>
+              {/* Home */}
               <button
-                onClick={() => toggleMenu("pdf-tools")}
-                className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+                onClick={() => { setActiveTool(null); setActiveMenu("all-tools"); }}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer ${activeMenu === "all-tools" && !activeTool
+                  ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-950 dark:text-zinc-50 border border-zinc-300 dark:border-zinc-800"
+                  : "text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 border border-transparent"
+                  }`}
               >
-                <div className="flex items-center gap-3">
-                  <Folder className="h-4 w-4 text-amber-500 fill-amber-500/20" />
-                  <span>PDF Tools</span>
-                </div>
-                {expandedMenus["pdf-tools"] ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                <Home className="h-4 w-4 text-emerald-500" />
+                <span>Home </span>
               </button>
 
-              {expandedMenus["pdf-tools"] && (
-                <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
-                  {pdfMenuTools.map(t => (
-                    <button
-                      key={t.id}
-                      onClick={() => {
-                        if (t.isActive) {
-                          setActiveTool(t.id)
-                        } else {
-                          triggerPlaceholderToast(t.name)
-                        }
-                      }}
-                      className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all w-full text-left cursor-pointer ${activeTool === t.id
-                        ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50"
-                        : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-300"
-                        }`}
-                    >
-                      <ToolIcon iconName={t.icon} className={`h-3.5 w-3.5 ${t.color}`} />
-                      <span className="truncate">{t.name} {t.emoji}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+              {/* PDF Tools Dropdown */}
+              <div>
+                <button
+                  onClick={() => toggleMenu("pdf-tools")}
+                  className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <Folder className="h-4 w-4 text-amber-500 fill-amber-500/20" />
+                    <span>PDF Tools</span>
+                  </div>
+                  {expandedMenus["pdf-tools"] ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                </button>
 
-            {/* AI Studio */}
-            <div>
-              <button
-                onClick={() => toggleMenu("ai-studio")}
-                className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
-              >
-                <div className="flex items-center gap-3">
-                  <Bot className="h-4 w-4 text-purple-500" />
-                  <span>AI Studio</span>
-                </div>
-                {expandedMenus["ai-studio"] ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-              </button>
-              {expandedMenus["ai-studio"] && (
-                <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
-                  {[
-                    { id: "ocr", label: "OCR Text Recognition 👀", color: "text-rose-500" },
-                    { id: "watermark", label: "Smart Watermark 💧", color: "text-blue-400" },
-                    { id: "compress", label: "AI Compress ✨", color: "text-purple-500" },
-                  ].map(item => (
-                    <button
-                      key={item.id}
-                      onClick={() => setActiveTool(item.id)}
-                      className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all w-full text-left cursor-pointer ${
-                        activeTool === item.id
+                {expandedMenus["pdf-tools"] && (
+                  <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
+                    {pdfMenuTools.map(t => (
+                      <button
+                        key={t.id}
+                        onClick={() => {
+                          if (t.isActive) {
+                            setActiveTool(t.id)
+                          } else {
+                            triggerPlaceholderToast(t.name)
+                          }
+                        }}
+                        className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all w-full text-left cursor-pointer ${activeTool === t.id
+                          ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50"
+                          : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-300"
+                          }`}
+                      >
+                        <ToolIcon iconName={t.icon} className={`h-3.5 w-3.5 ${t.color}`} />
+                        <span className="truncate">{t.name} {t.emoji}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* AI Studio */}
+              <div>
+                <button
+                  onClick={() => toggleMenu("ai-studio")}
+                  className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <Bot className="h-4 w-4 text-purple-500" />
+                    <span>AI Studio</span>
+                  </div>
+                  {expandedMenus["ai-studio"] ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                </button>
+                {expandedMenus["ai-studio"] && (
+                  <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
+                    {[
+                      { id: "ocr", label: "OCR Text Recognition 👀", color: "text-rose-500" },
+                      { id: "watermark", label: "Smart Watermark 💧", color: "text-blue-400" },
+                      { id: "compress", label: "AI Compress ✨", color: "text-purple-500" },
+                    ].map(item => (
+                      <button
+                        key={item.id}
+                        onClick={() => setActiveTool(item.id)}
+                        className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all w-full text-left cursor-pointer ${activeTool === item.id
                           ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50"
                           : "text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-900 dark:hover:text-zinc-300"
-                      }`}
-                    >
-                      <Sparkles className={`h-3 w-3 ${item.color}`} />
-                      <span className="truncate">{item.label}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+                          }`}
+                      >
+                        <Sparkles className={`h-3 w-3 ${item.color}`} />
+                        <span className="truncate">{item.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-            {/* Image Tools */}
-            <div>
-              <button
-                onClick={() => toggleMenu("image-tools")}
-                className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
-              >
-                <div className="flex items-center gap-3">
-                  <Image className="h-4 w-4 text-blue-500" />
-                  <span>Image Tools</span>
-                </div>
-                {expandedMenus["image-tools"] ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-              </button>
-              {expandedMenus["image-tools"] && (
-                <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
-                  {[
-                    { id: "img2pdf", label: "Image to PDF 🖼️", color: "text-emerald-400" },
-                    { id: "pdf2jpg", label: "PDF to JPG 📸", color: "text-pink-500" },
-                    { id: "webp2png", label: "WEBP to PNG 🔄", color: "text-sky-400" },
-                    { id: "jfif2png", label: "JFIF to PNG 🔄", color: "text-indigo-400" },
-                    { id: "heic2jpg", label: "HEIC to JPG 📷", color: "text-blue-600" },
-                    { id: "png2svg", label: "PNG to SVG 🎨", color: "text-yellow-400" },
-                    { id: "imageresize", label: "Image Resizer ⚠️", color: "text-amber-600" },
-                    { id: "cropimage", label: "Crop Image ✂️", color: "text-red-600" },
-                  ].map(item => (
-                    <button
-                      key={item.id}
-                      onClick={() => setActiveTool(item.id)}
-                      className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all w-full text-left cursor-pointer ${
-                        activeTool === item.id
+              {/* Image Tools */}
+              <div>
+                <button
+                  onClick={() => toggleMenu("image-tools")}
+                  className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <Image className="h-4 w-4 text-blue-500" />
+                    <span>Image Tools</span>
+                  </div>
+                  {expandedMenus["image-tools"] ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                </button>
+                {expandedMenus["image-tools"] && (
+                  <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
+                    {[
+                      { id: "img2pdf", label: "Image to PDF 🖼️", color: "text-emerald-400" },
+                      { id: "pdf2jpg", label: "PDF to JPG 📸", color: "text-pink-500" },
+                      { id: "webp2png", label: "WEBP to PNG 🔄", color: "text-sky-400" },
+                      { id: "jfif2png", label: "JFIF to PNG 🔄", color: "text-indigo-400" },
+                      { id: "heic2jpg", label: "HEIC to JPG 📷", color: "text-blue-600" },
+                      { id: "png2svg", label: "PNG to SVG 🎨", color: "text-yellow-400" },
+                      { id: "imageresize", label: "Image Resizer ⚠️", color: "text-amber-600" },
+                      { id: "cropimage", label: "Crop Image ✂️", color: "text-red-600" },
+                    ].map(item => (
+                      <button
+                        key={item.id}
+                        onClick={() => setActiveTool(item.id)}
+                        className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all w-full text-left cursor-pointer ${activeTool === item.id
                           ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50"
                           : "text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-900 dark:hover:text-zinc-300"
-                      }`}
-                    >
-                      <FileImage className={`h-3 w-3 ${item.color}`} />
-                      <span className="truncate">{item.label}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+                          }`}
+                      >
+                        <FileImage className={`h-3 w-3 ${item.color}`} />
+                        <span className="truncate">{item.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-            {/* Office Tools */}
-            <div>
-              <button
-                onClick={() => toggleMenu("office-tools")}
-                className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
-              >
-                <div className="flex items-center gap-3">
-                  <FileText className="h-4 w-4 text-emerald-500" />
-                  <span>Office Tools</span>
-                </div>
-                {expandedMenus["office-tools"] ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-              </button>
-              {expandedMenus["office-tools"] && (
-                <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
-                  {[
-                    { id: "pdf2word", label: "PDF to Word ⚠️", color: "text-red-400" },
-                    { id: "pdf2epub", label: "PDF to EPUB 📚", color: "text-violet-500" },
-                    { id: "unitconv", label: "Unit Converter ⚖️", color: "text-slate-500" },
-                    { id: "timeconv", label: "Time Converter 🕒", color: "text-slate-500" },
-                  ].map(item => (
-                    <button
-                      key={item.id}
-                      onClick={() => setActiveTool(item.id)}
-                      className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all w-full text-left cursor-pointer ${
-                        activeTool === item.id
+              {/* Office Tools */}
+              <div>
+                <button
+                  onClick={() => toggleMenu("office-tools")}
+                  className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <FileText className="h-4 w-4 text-emerald-500" />
+                    <span>Office Tools</span>
+                  </div>
+                  {expandedMenus["office-tools"] ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                </button>
+                {expandedMenus["office-tools"] && (
+                  <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
+                    {[
+                      { id: "pdf2word", label: "PDF to Word ⚠️", color: "text-red-400" },
+                      { id: "pdf2epub", label: "PDF to EPUB 📚", color: "text-violet-500" },
+                      { id: "unitconv", label: "Unit Converter ⚖️", color: "text-slate-500" },
+                      { id: "timeconv", label: "Time Converter 🕒", color: "text-slate-500" },
+                    ].map(item => (
+                      <button
+                        key={item.id}
+                        onClick={() => setActiveTool(item.id)}
+                        className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all w-full text-left cursor-pointer ${activeTool === item.id
                           ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50"
                           : "text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-900 dark:hover:text-zinc-300"
-                      }`}
+                          }`}
+                      >
+                        <FileText className={`h-3 w-3 ${item.color}`} />
+                        <span className="truncate">{item.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Utilities */}
+              <div>
+                <button
+                  onClick={() => toggleMenu("utilities")}
+                  className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    <Wrench className="h-4 w-4 text-zinc-500" />
+                    <span>Utilities</span>
+                  </div>
+                  {expandedMenus["utilities"] ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                </button>
+
+                {expandedMenus["utilities"] && (
+                  <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
+                    <button
+                      onClick={() => setActiveTool("qrgenerator")}
+                      className="flex items-center justify-between w-full px-2 py-1 rounded-md text-xs font-medium text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-900 dark:hover:text-zinc-300 cursor-pointer text-left"
                     >
-                      <FileText className={`h-3 w-3 ${item.color}`} />
-                      <span className="truncate">{item.label}</span>
+                      <span>QR Generator</span>
+                      <span className="text-[8px] font-bold bg-purple-500 text-white px-1.5 py-0.5 rounded scale-90">NEW</span>
                     </button>
-                  ))}
-                </div>
-              )}
-            </div>
+                    <button
+                      onClick={() => setActiveTool("unitconv")}
+                      className="flex items-center gap-2.5 px-2 py-1 rounded-md text-xs font-medium text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-900 dark:hover:text-zinc-300 cursor-pointer text-left"
+                    >
+                      <span>Unit Converter ⚖️</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTool("timeconv")}
+                      className="flex items-center gap-2.5 px-2 py-1 rounded-md text-xs font-medium text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-900 dark:hover:text-zinc-300 cursor-pointer text-left"
+                    >
+                      <span>Time Converter 🕒</span>
+                    </button>
+                  </div>
+                )}
+              </div>
 
-            {/* Utilities */}
-            <div>
+              {/* Independent Navigation */}
               <button
-                onClick={() => toggleMenu("utilities")}
-                className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
-              >
-                <div className="flex items-center gap-3">
-                  <Wrench className="h-4 w-4 text-zinc-500" />
-                  <span>Utilities</span>
-                </div>
-                {expandedMenus["utilities"] ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-              </button>
-
-              {expandedMenus["utilities"] && (
-                <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
-                  <button
-                    onClick={() => setActiveTool("qrgenerator")}
-                    className="flex items-center justify-between w-full px-2 py-1 rounded-md text-xs font-medium text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-900 dark:hover:text-zinc-300 cursor-pointer text-left"
-                  >
-                    <span>QR Generator</span>
-                    <span className="text-[8px] font-bold bg-purple-500 text-white px-1.5 py-0.5 rounded scale-90">NEW</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTool("unitconv")}
-                    className="flex items-center gap-2.5 px-2 py-1 rounded-md text-xs font-medium text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-900 dark:hover:text-zinc-300 cursor-pointer text-left"
-                  >
-                    <span>Unit Converter ⚖️</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTool("timeconv")}
-                    className="flex items-center gap-2.5 px-2 py-1 rounded-md text-xs font-medium text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-900 dark:hover:text-zinc-300 cursor-pointer text-left"
-                  >
-                    <span>Time Converter 🕒</span>
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Independent Navigation */}
-            <button
-              onClick={() => { setActiveMenu("recent"); setActiveTool(null) }}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all ${
-                activeMenu === "recent"
+                onClick={() => { setActiveMenu("recent"); setActiveTool(null) }}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all ${activeMenu === "recent"
                   ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 border border-zinc-300 dark:border-zinc-800"
                   : "text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 border border-transparent"
-              }`}
-            >
-              <Clock className="h-4 w-4" />
-              Recent Files
-              {recentActivity.length > 0 && (
-                <span className="ml-auto text-[10px] font-bold bg-zinc-300 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 px-1.5 py-0.5 rounded-full">{recentActivity.length}</span>
-              )}
-            </button>
-            <button
-              onClick={() => { setActiveMenu("favorites"); setActiveTool(null) }}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all ${
-                activeMenu === "favorites"
+                  }`}
+              >
+                <Clock className="h-4 w-4" />
+                Recent Files
+                {recentActivity.length > 0 && (
+                  <span className="ml-auto text-[10px] font-bold bg-zinc-300 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 px-1.5 py-0.5 rounded-full">{recentActivity.length}</span>
+                )}
+              </button>
+              <button
+                onClick={() => { setActiveMenu("favorites"); setActiveTool(null) }}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all ${activeMenu === "favorites"
                   ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 border border-zinc-300 dark:border-zinc-800"
                   : "text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 border border-transparent"
-              }`}
-            >
-              <Star className={`h-4 w-4 ${favoritedTools.length > 0 ? "text-amber-500 fill-amber-500" : ""}`} />
-              Favorites
-              {favoritedTools.length > 0 && (
-                <span className="ml-auto text-[10px] font-bold bg-amber-400/20 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-full">{favoritedTools.length}</span>
-              )}
-            </button>
-            <button
-              onClick={() => toast({ title: "Cloud Storage", description: "Connect to Google Drive or Dropbox." })}
-              className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all border border-transparent"
-            >
-              <Cloud className="h-4 w-4" />
-              Cloud Storage
-            </button>
-            <button
-              onClick={() => { setActiveMenu("templates"); setActiveTool(null) }}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all ${
-                activeMenu === "templates"
+                  }`}
+              >
+                <Star className={`h-4 w-4 ${favoritedTools.length > 0 ? "text-amber-500 fill-amber-500" : ""}`} />
+                Favorites
+                {favoritedTools.length > 0 && (
+                  <span className="ml-auto text-[10px] font-bold bg-amber-400/20 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-full">{favoritedTools.length}</span>
+                )}
+              </button>
+              <button
+                onClick={() => toast({ title: "Cloud Storage", description: "Connect to Google Drive or Dropbox." })}
+                className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all border border-transparent"
+              >
+                <Cloud className="h-4 w-4" />
+                Cloud Storage
+              </button>
+              <button
+                onClick={() => { setActiveMenu("templates"); setActiveTool(null) }}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all ${activeMenu === "templates"
                   ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 border border-zinc-300 dark:border-zinc-800"
                   : "text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 border border-transparent"
-              }`}
-            >
-              <FileText className="h-4 w-4" />
-              Templates
-            </button>
+                  }`}
+              >
+                <FileText className="h-4 w-4" />
+                Templates
+              </button>
 
-            {/* Bottom Actions */}
-            <div className="flex flex-col gap-1 border-t border-zinc-200 dark:border-zinc-900 pt-3 mt-2">
-              <button
-                onClick={() => toast({ title: "Settings", description: "Configure system themes and visual styles." })}
-                className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
-              >
-                <Settings className="h-4 w-4" />
-                Settings
-              </button>
-              <button
-                onClick={() => toast({ title: "Help Center", description: "Visit our help center for assistance." })}
-                className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
-              >
-                <HelpCircle className="h-4 w-4" />
-                Help Center
-              </button>
-              <button
-                onClick={() => toast({ title: "About Us", description: "GhostPDF is built client-side with privacy first." })}
-                className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
-              >
-                <Info className="h-4 w-4" />
-                About Us
-              </button>
-            </div>
-          </nav>
+              {/* Bottom Actions */}
+              <div className="flex flex-col gap-1 border-t border-zinc-200 dark:border-zinc-900 pt-3 mt-2">
+                <button
+                  onClick={() => toast({ title: "Settings", description: "Configure system themes and visual styles." })}
+                  className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+                >
+                  <Settings className="h-4 w-4" />
+                  Settings
+                </button>
+                <button
+                  onClick={() => toast({ title: "Help Center", description: "Visit our help center for assistance." })}
+                  className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+                >
+                  <HelpCircle className="h-4 w-4" />
+                  Help Center
+                </button>
+                <button
+                  onClick={() => toast({ title: "About Us", description: "GhostPDF is built client-side with privacy first." })}
+                  className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+                >
+                  <Info className="h-4 w-4" />
+                  About Us
+                </button>
+              </div>
+            </nav>
           </div>
         </div>
 
