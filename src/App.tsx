@@ -351,7 +351,7 @@ function DashboardContent() {
     <div className="flex min-h-screen w-full bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 transition-colors">
 
       {/* Sidebar Layout */}
-      <aside className="w-[260px] border-r border-zinc-200 dark:border-zinc-900 bg-zinc-50 dark:bg-zinc-950 shrink-0 hidden md:flex flex-col justify-between p-5 select-none">
+      <aside className="w-[260px] border-r border-white/10 dark:border-zinc-800/60 bg-white/60 dark:bg-zinc-950/70 backdrop-blur-xl shrink-0 hidden md:flex flex-col justify-between p-5 select-none shadow-[1px_0_24px_0_rgba(0,0,0,0.06)] dark:shadow-[1px_0_24px_0_rgba(0,0,0,0.3)]">
         <div className="flex flex-col gap-6">
 
           {/* Logo */}
@@ -420,7 +420,7 @@ function DashboardContent() {
             <div>
               <button
                 onClick={() => toggleMenu("ai-studio")}
-                className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+                className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
               >
                 <div className="flex items-center gap-3">
                   <Bot className="h-4 w-4 text-purple-500" />
@@ -428,13 +428,35 @@ function DashboardContent() {
                 </div>
                 {expandedMenus["ai-studio"] ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
               </button>
+              {expandedMenus["ai-studio"] && (
+                <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
+                  {[
+                    { id: "ocr", label: "OCR Text Recognition 👀", color: "text-rose-500" },
+                    { id: "watermark", label: "Smart Watermark 💧", color: "text-blue-400" },
+                    { id: "compress", label: "AI Compress ✨", color: "text-purple-500" },
+                  ].map(item => (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveTool(item.id)}
+                      className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all w-full text-left cursor-pointer ${
+                        activeTool === item.id
+                          ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50"
+                          : "text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-900 dark:hover:text-zinc-300"
+                      }`}
+                    >
+                      <Sparkles className={`h-3 w-3 ${item.color}`} />
+                      <span className="truncate">{item.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Image Tools */}
             <div>
               <button
                 onClick={() => toggleMenu("image-tools")}
-                className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+                className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
               >
                 <div className="flex items-center gap-3">
                   <Image className="h-4 w-4 text-blue-500" />
@@ -442,13 +464,40 @@ function DashboardContent() {
                 </div>
                 {expandedMenus["image-tools"] ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
               </button>
+              {expandedMenus["image-tools"] && (
+                <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
+                  {[
+                    { id: "img2pdf", label: "Image to PDF 🖼️", color: "text-emerald-400" },
+                    { id: "pdf2jpg", label: "PDF to JPG 📸", color: "text-pink-500" },
+                    { id: "webp2png", label: "WEBP to PNG 🔄", color: "text-sky-400" },
+                    { id: "jfif2png", label: "JFIF to PNG 🔄", color: "text-indigo-400" },
+                    { id: "heic2jpg", label: "HEIC to JPG 📷", color: "text-blue-600" },
+                    { id: "png2svg", label: "PNG to SVG 🎨", color: "text-yellow-400" },
+                    { id: "imageresize", label: "Image Resizer ⚠️", color: "text-amber-600" },
+                    { id: "cropimage", label: "Crop Image ✂️", color: "text-red-600" },
+                  ].map(item => (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveTool(item.id)}
+                      className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all w-full text-left cursor-pointer ${
+                        activeTool === item.id
+                          ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50"
+                          : "text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-900 dark:hover:text-zinc-300"
+                      }`}
+                    >
+                      <FileImage className={`h-3 w-3 ${item.color}`} />
+                      <span className="truncate">{item.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Office Tools */}
             <div>
               <button
                 onClick={() => toggleMenu("office-tools")}
-                className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+                className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
               >
                 <div className="flex items-center gap-3">
                   <FileText className="h-4 w-4 text-emerald-500" />
@@ -456,13 +505,36 @@ function DashboardContent() {
                 </div>
                 {expandedMenus["office-tools"] ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
               </button>
+              {expandedMenus["office-tools"] && (
+                <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
+                  {[
+                    { id: "pdf2word", label: "PDF to Word ⚠️", color: "text-red-400" },
+                    { id: "pdf2epub", label: "PDF to EPUB 📚", color: "text-violet-500" },
+                    { id: "unitconv", label: "Unit Converter ⚖️", color: "text-slate-500" },
+                    { id: "timeconv", label: "Time Converter 🕒", color: "text-slate-500" },
+                  ].map(item => (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveTool(item.id)}
+                      className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all w-full text-left cursor-pointer ${
+                        activeTool === item.id
+                          ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50"
+                          : "text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-900 dark:hover:text-zinc-300"
+                      }`}
+                    >
+                      <FileText className={`h-3 w-3 ${item.color}`} />
+                      <span className="truncate">{item.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Utilities */}
             <div>
               <button
                 onClick={() => toggleMenu("utilities")}
-                className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+                className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
               >
                 <div className="flex items-center gap-3">
                   <Wrench className="h-4 w-4 text-zinc-500" />
@@ -475,10 +547,22 @@ function DashboardContent() {
                 <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
                   <button
                     onClick={() => setActiveTool("qrgenerator")}
-                    className="flex items-center justify-between w-full px-2 py-1 rounded-md text-xs font-medium text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-300 cursor-pointer text-left"
+                    className="flex items-center justify-between w-full px-2 py-1 rounded-md text-xs font-medium text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-900 dark:hover:text-zinc-300 cursor-pointer text-left"
                   >
                     <span>QR Generator</span>
                     <span className="text-[8px] font-bold bg-purple-500 text-white px-1.5 py-0.5 rounded scale-90">NEW</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTool("unitconv")}
+                    className="flex items-center gap-2.5 px-2 py-1 rounded-md text-xs font-medium text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-900 dark:hover:text-zinc-300 cursor-pointer text-left"
+                  >
+                    <span>Unit Converter ⚖️</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTool("timeconv")}
+                    className="flex items-center gap-2.5 px-2 py-1 rounded-md text-xs font-medium text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-900 dark:hover:text-zinc-300 cursor-pointer text-left"
+                  >
+                    <span>Time Converter 🕒</span>
                   </button>
                 </div>
               )}
@@ -487,28 +571,28 @@ function DashboardContent() {
             {/* Independent Navigation */}
             <button
               onClick={() => toast({ title: "Recent Files", description: "No files processed in this session." })}
-              className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+              className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
             >
               <Clock className="h-4 w-4" />
               Recent Files
             </button>
             <button
               onClick={() => toast({ title: "Favorites", description: "You haven't favorited any tools yet." })}
-              className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+              className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
             >
               <Star className="h-4 w-4" />
               Favorites
             </button>
             <button
               onClick={() => toast({ title: "Cloud Storage", description: "Connect to Google Drive or Dropbox." })}
-              className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+              className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
             >
               <Cloud className="h-4 w-4" />
               Cloud Storage
             </button>
             <button
               onClick={() => toast({ title: "Templates", description: "Choose from pre-made PDF layout templates." })}
-              className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+              className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
             >
               <FileText className="h-4 w-4" />
               Templates
