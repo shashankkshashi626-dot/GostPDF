@@ -1109,7 +1109,7 @@ function DashboardContent() {
               {/* Bottom Actions */}
               <div className="flex flex-col gap-1 border-t border-zinc-200 dark:border-zinc-900 pt-3 mt-2">
                 <button
-                  onClick={() => { setActiveMenu("settings"); setActiveTool(null); }}
+                  onClick={() => { setActiveMenu("settings"); setActiveTool(null); setMobileMenuOpen(false); }}
                   className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all ${activeMenu === "settings"
                     ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 border border-zinc-300 dark:border-zinc-800"
                     : "text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 border border-transparent"
@@ -1117,23 +1117,6 @@ function DashboardContent() {
                 >
                   <Settings className="h-4 w-4 text-amber-500" />
                   Settings
-                </button>
-                <button
-                  onClick={() => { setActiveMenu("settings"); setActiveTool(null); }}
-                  className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
-                >
-                  <HelpCircle className="h-4 w-4 text-emerald-500" />
-                  Help Center
-                </button>
-                <button
-                  onClick={() => { setActiveMenu("about"); setActiveTool(null); }}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all ${activeMenu === "about"
-                    ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 border border-zinc-300 dark:border-zinc-800"
-                    : "text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 border border-transparent"
-                    }`}
-                >
-                  <Info className="h-4 w-4 text-cyan-400" />
-                  About Us
                 </button>
               </div>
             </nav>
