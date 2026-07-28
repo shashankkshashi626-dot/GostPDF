@@ -385,6 +385,90 @@ function DashboardContent() {
       )
     }
 
+    // ── About Us Panel ───────────────────────────────────────────────
+    if (activeMenu === "about") {
+      return (
+        <div className="flex-1 py-10 px-6 md:px-12 max-w-5xl mx-auto w-full animate-in fade-in duration-300">
+          {/* Header */}
+          <div className="flex items-center gap-4 mb-10 pb-6 border-b border-zinc-200 dark:border-zinc-800">
+            <div className="h-14 w-14 rounded-2xl bg-gradient-to-tr from-cyan-500/20 to-blue-500/20 flex items-center justify-center border border-cyan-500/30 shrink-0 shadow-sm">
+              <Info className="h-7 w-7 text-cyan-400" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-3xl font-extrabold text-zinc-900 dark:text-zinc-50 tracking-tight">About GhostPDF</h1>
+                <span className="text-xs font-bold bg-cyan-500/10 text-cyan-500 px-2.5 py-0.5 rounded-full border border-cyan-500/20">v1.0.0</span>
+              </div>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1 font-medium">
+                The Privacy-First, 100% Client-Side PDF Toolkit 👻
+              </p>
+            </div>
+          </div>
+
+          {/* Hero Mission Card */}
+          <div className="relative overflow-hidden p-8 rounded-3xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/5 via-blue-500/5 to-purple-500/5 dark:from-cyan-950/20 dark:via-blue-950/20 dark:to-purple-950/20 mb-10 shadow-sm">
+            <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-zinc-50 mb-3">
+              Your Files Never Leave Your Device 🔒
+            </h2>
+            <p className="text-sm md:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-3xl">
+              GhostPDF was built with a single core principle: <strong className="text-zinc-900 dark:text-zinc-100">complete user privacy and data security</strong>. Unlike traditional online PDF tools that upload your sensitive documents to remote servers, GhostPDF processes 100% of your files locally inside your web browser using WebAssembly and modern browser APIs.
+            </p>
+          </div>
+
+          {/* Key Features Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 hover:border-cyan-500/40 transition-colors">
+              <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4">
+                <Shield className="h-5 w-5 text-emerald-500" />
+              </div>
+              <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50 mb-2">100% Local &amp; Private</h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Zero file uploads, zero server processing, and zero data tracking. Your documents remain strictly on your machine.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 hover:border-cyan-500/40 transition-colors">
+              <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center mb-4">
+                <ClockIcon className="h-5 w-5 text-amber-500" />
+              </div>
+              <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50 mb-2">Works Fully Offline</h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Once loaded, GhostPDF requires no active internet connection. Work seamlessly on airplanes, remote areas, or offline setups.
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 hover:border-cyan-500/40 transition-colors">
+              <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4">
+                <Wrench className="h-5 w-5 text-purple-500" />
+              </div>
+              <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50 mb-2">24+ Powerful Tools</h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Merge, Split, Flatten, Resize, Compress, Unlock, Protect, OCR, Sign, Page Numbers, Watermarks, Image Converters &amp; QR Code Generator.
+              </p>
+            </div>
+          </div>
+
+          {/* Technology & Open Source */}
+          <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50">Free &amp; Open Source</h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 max-w-xl">
+                GhostPDF is built using React, Vite, PDF-Lib, Tesseract.js, and PDF.js. Free for everyone forever without ads or mandatory sign-ups.
+              </p>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <button
+                onClick={() => { setActiveMenu("all-tools"); setActiveTool(null); }}
+                className="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-white font-bold text-xs transition-colors cursor-pointer shadow-sm"
+              >
+                Browse Tools 🚀
+              </button>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div className="flex-1 py-8 px-6 md:px-12 max-w-7xl mx-auto w-full animate-in fade-in duration-300">
         {/* Top Header */}
@@ -820,10 +904,13 @@ function DashboardContent() {
                   Help Center
                 </button>
                 <button
-                  onClick={() => toast({ title: "About Us", description: "GhostPDF is built client-side with privacy first." })}
-                  className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+                  onClick={() => { setActiveMenu("about"); setActiveTool(null); }}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all ${activeMenu === "about"
+                    ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 border border-zinc-300 dark:border-zinc-800"
+                    : "text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 border border-transparent"
+                    }`}
                 >
-                  <Info className="h-4 w-4" />
+                  <Info className="h-4 w-4 text-cyan-400" />
                   About Us
                 </button>
               </div>
@@ -886,10 +973,7 @@ function DashboardContent() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => toast({
-                title: "GhostPDF v0.1.0 (MVP)",
-                description: "Built strictly client-side using React, Tailwind CSS, pdf-lib, and pdf.js."
-              })}
+              onClick={() => { setActiveMenu("about"); setActiveTool(null); }}
               className="h-8 text-xs font-bold flex gap-1.5 items-center cursor-pointer dark:hover:bg-zinc-900"
             >
               <Info className="h-3.5 w-3.5" />
