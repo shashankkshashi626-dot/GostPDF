@@ -120,8 +120,8 @@ function DashboardContent() {
       return
     }
 
-    const amountInPaise = tier === "medium" ? 19900 : 49900
-    const planTitle = tier === "medium" ? "GhostPDF Medium Plan (12 Months)" : "GhostPDF Pro Plan (12 Months)"
+    const amountInPaise = 100 // Test Mode Price: ₹1 INR (100 paise)
+    const planTitle = tier === "medium" ? "GhostPDF Medium Plan (12 Months - Test ₹1)" : "GhostPDF Pro Plan (12 Months - Test ₹1)"
 
     try {
       // STEP 1: Backend Create Order (/api/create-order)
@@ -1129,11 +1129,11 @@ function DashboardContent() {
                 onClick={() => handleRazorpayPayment("medium")}
                 className={`p-3 rounded-xl border transition-all text-center relative cursor-pointer ${userTier === "medium" ? "border-blue-500 bg-blue-500/10" : "border-blue-500/30 bg-blue-500/5 hover:border-blue-500"}`}
               >
-                <span className="absolute top-0 right-0 bg-blue-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-bl">LOW PRICE</span>
+                <span className="absolute top-0 right-0 bg-blue-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-bl">TEST ₹1</span>
                 <span className="text-[9px] font-bold tracking-wider text-blue-500 uppercase block">Medium</span>
-                <div className="text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">₹199 <span className="text-[8px] text-zinc-400">/ 12M</span></div>
+                <div className="text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">₹1 <span className="text-[8px] text-zinc-400">/ 12M</span></div>
                 <span className="text-[9px] text-zinc-400 block">50MB &bull; 10 Files</span>
-                <span className="mt-2 block text-[9px] font-bold text-blue-500">{userTier === "medium" ? "Active ⚡" : "Get Medium ⚡"}</span>
+                <span className="mt-2 block text-[9px] font-bold text-blue-500">{userTier === "medium" ? "Active ⚡" : "Get Medium (₹1) ⚡"}</span>
               </div>
 
               {/* Pro Tier */}
@@ -1141,11 +1141,11 @@ function DashboardContent() {
                 onClick={() => handleRazorpayPayment("pro")}
                 className={`p-3 rounded-xl border transition-all text-center relative cursor-pointer ${userTier === "pro" ? "border-amber-500 bg-amber-500/10" : "border-amber-500/40 bg-amber-500/10 hover:border-amber-500"}`}
               >
-                <span className="absolute top-0 right-0 bg-amber-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-bl">UNLIMITED</span>
+                <span className="absolute top-0 right-0 bg-amber-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-bl">TEST ₹1</span>
                 <span className="text-[9px] font-bold tracking-wider text-amber-500 uppercase block">Pro Unlimited</span>
-                <div className="text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">₹499 <span className="text-[8px] text-zinc-400">/ 12M</span></div>
+                <div className="text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">₹1 <span className="text-[8px] text-zinc-400">/ 12M</span></div>
                 <span className="text-[9px] text-zinc-400 block">Unlimited MB &bull; Files</span>
-                <span className="mt-2 block text-[9px] font-bold text-amber-500">{userTier === "pro" ? "Active 👑" : "Get Pro 👑"}</span>
+                <span className="mt-2 block text-[9px] font-bold text-amber-500">{userTier === "pro" ? "Active 👑" : "Get Pro (₹1) 👑"}</span>
               </div>
             </div>
 
@@ -1161,14 +1161,14 @@ function DashboardContent() {
                 onClick={() => handleRazorpayPayment("medium")}
                 className="py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs transition-all shadow-md shadow-blue-500/20 cursor-pointer flex items-center justify-center gap-1.5"
               >
-                <span>Medium Plan (₹199)</span>
+                <span>Medium Plan (₹1 Test)</span>
               </button>
 
               <button
                 onClick={() => handleRazorpayPayment("pro")}
                 className="py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-xs transition-all shadow-md shadow-amber-500/20 cursor-pointer flex items-center justify-center gap-1.5"
               >
-                <span>Pro Unlimited (₹499)</span>
+                <span>Pro Unlimited (₹1 Test)</span>
               </button>
             </div>
           </div>
