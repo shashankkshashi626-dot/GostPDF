@@ -1213,10 +1213,10 @@ function DashboardContent() {
         </main>
       </div>
 
-      {/* Upgrade Pro Modal with Razorpay Checkout */}
+      {/* GhostPDF Pro Upgrade Modal */}
       {showUpgradeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-lg p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-lg p-4 sm:p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl overflow-y-auto max-h-[92vh] scroll-smooth">
             {/* Close Button */}
             <button
               onClick={() => {
@@ -1227,32 +1227,35 @@ function DashboardContent() {
                   variant: "default"
                 })
               }}
-              className="absolute top-4 right-4 h-8 w-8 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-500 transition-colors cursor-pointer"
+              className="absolute top-3.5 right-3.5 h-8 w-8 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-500 transition-colors cursor-pointer z-10"
             >
               <X className="h-4 w-4" />
             </button>
 
-            {/* Header */}
-            <div className="text-center mb-6">
-              <div className="inline-flex p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 mb-3">
-                <span className="text-3xl">👑</span>
+            {/* Header with Official GhostPDF Logo */}
+            <div className="text-center mb-5">
+              <div className="flex justify-center mb-2.5">
+                <div className="relative p-2.5 rounded-2xl bg-zinc-100/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 shadow-md">
+                  <img src={theme === "dark" ? "/logo.png" : "/logo_light.png"} alt="GhostPDF App Logo" className="h-12 w-12 object-contain rounded-xl" />
+                  <span className="absolute -top-1.5 -right-1.5 text-base">👑</span>
+                </div>
               </div>
-              <h2 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight">GhostPDF Pro Upgrade</h2>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+              <h2 className="text-xl sm:text-2xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight">GhostPDF Pro Upgrade</h2>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                 Unlock Unlimited Speed, Batch Processing &amp; Supporter Perks
               </p>
             </div>
 
             {/* Feature Checklist */}
-            <div className="space-y-3 mb-6 bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+            <div className="space-y-2.5 mb-4 bg-zinc-50 dark:bg-zinc-900/50 p-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-800">
               {[
                 { title: "⚡ UNLIMITED File Sizes", desc: "Free Tier: 10 MB per file limit  |  GhostPDF Pro: Unlimited MB" },
                 { title: "⚡ UNLIMITED Batch Processing", desc: "Free Tier: Max 3 files limit  |  GhostPDF Pro: Unlimited Files" },
                 { title: "⚡ All 24+ PDF & Image Tools", desc: "Full access to Merge, Split, Compress, OCR, Sign & QR" },
                 { title: "⚡ 100% Offline & Private", desc: "Runs 100% in local browser RAM with zero server tracking" },
               ].map((feat, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <div className="h-5 w-5 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                <div key={i} className="flex items-start gap-2.5">
+                  <div className="h-4 w-4 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">
                     ✓
                   </div>
                   <div>
@@ -1264,66 +1267,66 @@ function DashboardContent() {
             </div>
 
             {/* Internet Requirement Notice */}
-            <div className="mb-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-2.5">
-              <span className="text-base shrink-0">🌐</span>
-              <p className="text-[11px] text-amber-700 dark:text-amber-300 leading-snug">
+            <div className="mb-3 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-2">
+              <span className="text-sm shrink-0">🌐</span>
+              <p className="text-[10px] sm:text-[11px] text-amber-700 dark:text-amber-300 leading-snug">
                 <strong>Internet Required Only Once for Upgrade:</strong> An active internet connection is needed to complete the Razorpay checkout. Once activated, <strong>GhostPDF Pro runs 100% offline with zero file size limits!</strong>
               </p>
             </div>
 
             {/* Live Gateway Notice */}
-            <div className="mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-left space-y-1">
-              <p className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+            <div className="mb-4 p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-left space-y-0.5">
+              <p className="text-[10px] sm:text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
                 🔒 Live Razorpay Payment Gateway
               </p>
-              <p className="text-[10px] text-zinc-600 dark:text-zinc-400 leading-snug">
+              <p className="text-[9px] sm:text-[10px] text-zinc-600 dark:text-zinc-400 leading-snug">
                 Supports real UPI (PhonePe, Google Pay, Paytm, BHIM), NetBanking, and Domestic/International Debit &amp; Credit Cards.
               </p>
             </div>
 
             {/* Pricing Cards (3 Tiers: Free, Medium 12M, Pro 12M) */}
-            <div className="grid grid-cols-3 gap-2.5 mb-4">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 mb-4">
               {/* Free Tier */}
               <div
                 onClick={() => {
                   toast({ title: "Free Plan", description: "You are on the free tier (10 MB limit & 3 files batch)." })
                   setShowUpgradeModal(false)
                 }}
-                className={`p-3 rounded-xl border transition-all text-center cursor-pointer ${userTier === "free" ? "border-zinc-400 dark:border-zinc-600 bg-zinc-200/50 dark:bg-zinc-800/60" : "border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-900/40 hover:border-zinc-400"}`}
+                className={`p-2 sm:p-3 rounded-xl border transition-all text-center cursor-pointer ${userTier === "free" ? "border-zinc-400 dark:border-zinc-600 bg-zinc-200/50 dark:bg-zinc-800/60" : "border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-900/40 hover:border-zinc-400"}`}
               >
-                <span className="text-[9px] font-bold tracking-wider text-zinc-400 uppercase block">Free Tier</span>
-                <div className="text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">$0</div>
-                <span className="text-[9px] text-zinc-400 block">10MB &bull; 3 Files</span>
-                <span className="mt-2 block text-[9px] font-semibold text-zinc-500">{userTier === "free" ? "Current" : "Free"}</span>
+                <span className="text-[8px] sm:text-[9px] font-bold tracking-wider text-zinc-400 uppercase block">Free Tier</span>
+                <div className="text-sm sm:text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">$0</div>
+                <span className="text-[8px] sm:text-[9px] text-zinc-400 block truncate">10MB &bull; 3 Files</span>
+                <span className="mt-1.5 block text-[8px] sm:text-[9px] font-semibold text-zinc-500">{userTier === "free" ? "Current" : "Free"}</span>
               </div>
 
               {/* Medium Tier */}
               <div
                 onClick={() => handleRazorpayPayment("medium")}
-                className={`p-3 rounded-xl border transition-all text-center relative cursor-pointer ${userTier === "medium" ? "border-blue-500 bg-blue-500/10" : "border-blue-500/30 bg-blue-500/5 hover:border-blue-500"}`}
+                className={`p-2 sm:p-3 rounded-xl border transition-all text-center relative cursor-pointer ${userTier === "medium" ? "border-blue-500 bg-blue-500/10" : "border-blue-500/30 bg-blue-500/5 hover:border-blue-500"}`}
               >
-                <span className="absolute top-0 right-0 bg-blue-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-bl">STARTER</span>
-                <span className="text-[9px] font-bold tracking-wider text-blue-500 uppercase block">Medium</span>
-                <div className="text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">₹199 <span className="text-[8px] text-zinc-400">/ 12M</span></div>
-                <span className="text-[9px] text-zinc-400 block">50MB &bull; 10 Files</span>
-                <span className="mt-2 block text-[9px] font-bold text-blue-500">{userTier === "medium" ? "Active ⚡" : "Get Medium ⚡"}</span>
+                <span className="absolute top-0 right-0 bg-blue-500 text-white text-[6px] sm:text-[7px] font-black px-1 sm:px-1.5 py-0.5 rounded-bl uppercase">STARTER</span>
+                <span className="text-[8px] sm:text-[9px] font-bold tracking-wider text-blue-500 uppercase block">Medium</span>
+                <div className="text-sm sm:text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">₹199 <span className="text-[7px] sm:text-[8px] text-zinc-400">/ 12M</span></div>
+                <span className="text-[8px] sm:text-[9px] text-zinc-400 block truncate">50MB &bull; 10 Files</span>
+                <span className="mt-1.5 block text-[8px] sm:text-[9px] font-bold text-blue-500">{userTier === "medium" ? "Active ⚡" : "Get Medium ⚡"}</span>
               </div>
 
               {/* Pro Tier */}
               <div
                 onClick={() => handleRazorpayPayment("pro")}
-                className={`p-3 rounded-xl border transition-all text-center relative cursor-pointer ${userTier === "pro" ? "border-amber-500 bg-amber-500/10" : "border-amber-500/40 bg-amber-500/10 hover:border-amber-500"}`}
+                className={`p-2 sm:p-3 rounded-xl border transition-all text-center relative cursor-pointer ${userTier === "pro" ? "border-amber-500 bg-amber-500/10" : "border-amber-500/40 bg-amber-500/10 hover:border-amber-500"}`}
               >
-                <span className="absolute top-0 right-0 bg-amber-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-bl">UNLIMITED</span>
-                <span className="text-[9px] font-bold tracking-wider text-amber-500 uppercase block">Pro Unlimited</span>
-                <div className="text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">₹499 <span className="text-[8px] text-zinc-400">/ 12M</span></div>
-                <span className="text-[9px] text-zinc-400 block">Unlimited MB &bull; Files</span>
-                <span className="mt-2 block text-[9px] font-bold text-amber-500">{userTier === "pro" ? "Active 👑" : "Get Pro 👑"}</span>
+                <span className="absolute top-0 right-0 bg-amber-500 text-white text-[6px] sm:text-[7px] font-black px-1 sm:px-1.5 py-0.5 rounded-bl uppercase">UNLIMITED</span>
+                <span className="text-[8px] sm:text-[9px] font-bold tracking-wider text-amber-500 uppercase block">Pro Unlimited</span>
+                <div className="text-sm sm:text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">₹499 <span className="text-[7px] sm:text-[8px] text-zinc-400">/ 12M</span></div>
+                <span className="text-[8px] sm:text-[9px] text-zinc-400 block truncate">Unlimited MB</span>
+                <span className="mt-1.5 block text-[8px] sm:text-[9px] font-bold text-amber-500">{userTier === "pro" ? "Active 👑" : "Get Pro 👑"}</span>
               </div>
             </div>
 
             {/* Razorpay Trust Badge */}
-            <div className="flex items-center justify-center gap-2 mb-4 text-[10px] font-semibold text-zinc-400 dark:text-zinc-500">
+            <div className="flex items-center justify-center gap-1.5 mb-3 text-[9px] sm:text-[10px] font-semibold text-zinc-400 dark:text-zinc-500">
               <Lock className="h-3 w-3 text-emerald-500" />
               <span>Secured by Razorpay • UPI / Cards / NetBanking / Wallets</span>
             </div>
@@ -1332,7 +1335,7 @@ function DashboardContent() {
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => handleRazorpayPayment("medium")}
-                className="py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs transition-all shadow-md shadow-blue-500/20 cursor-pointer flex items-center justify-center gap-1.5"
+                className="py-2.5 sm:py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-[11px] sm:text-xs transition-all shadow-md shadow-blue-500/20 cursor-pointer flex items-center justify-center gap-1"
               >
                 <span>Medium Plan (₹199)</span>
               </button>
@@ -1351,8 +1354,8 @@ function DashboardContent() {
 
       {/* Website Security & Safety Audit Modal */}
       {showSecurityModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-lg p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-lg p-4 sm:p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl overflow-y-auto max-h-[92vh] scroll-smooth">
             {/* Close Button */}
             <button
               onClick={() => setShowSecurityModal(false)}
