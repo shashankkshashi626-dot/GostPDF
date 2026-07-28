@@ -6,7 +6,7 @@ import {
   Shield, Crop, PenTool, FileDigit, Stamp,
   ScanText, FileDown, FileImage, FileText,
   BookOpen, RefreshCw, ArrowLeftRight, Clock as ClockIcon,
-  Image, Folder, Wrench, ChevronDown, ChevronRight, HelpCircle, Cloud,
+  Image, Folder, Wrench, ChevronDown, ChevronRight, HelpCircle,
   ShieldCheck, CheckCircle2, Lock
 } from "lucide-react"
 
@@ -350,110 +350,6 @@ function DashboardContent() {
               })}
             </div>
           )}
-        </div>
-      )
-    }
-
-    // ── Favorites Panel ───────────────────────────────────────────────
-    if (activeMenu === "favorites") {
-      const favTools = tools.filter(t => favoritedTools.includes(t.id))
-      return (
-        <div className="flex-1 py-8 px-6 md:px-12 max-w-4xl mx-auto w-full animate-in fade-in duration-300">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="h-11 w-11 rounded-xl bg-amber-500/10 flex items-center justify-center">
-              <Star className="h-5 w-5 text-amber-500 fill-amber-500" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">Favorites</h1>
-              <p className="text-sm text-zinc-400">Star tools on the home screen to pin them here</p>
-            </div>
-          </div>
-          {favTools.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <Star className="h-12 w-12 text-zinc-300 dark:text-zinc-700 mb-4" />
-              <p className="text-base font-semibold text-zinc-500">No favorites yet</p>
-              <p className="text-sm text-zinc-400 mt-1">Click the ⭐ on any tool card to save it here</p>
-              <button
-                onClick={() => { setActiveMenu("all-tools"); setActiveTool(null) }}
-                className="mt-4 text-xs font-semibold px-4 py-2 rounded-lg bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 transition-colors cursor-pointer"
-              >Browse Tools</button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {favTools.map(t => (
-                <div
-                  key={t.id}
-                  onClick={() => openTool(t.id, t.name)}
-                  className="group relative flex flex-col p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-amber-400/50 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/45 cursor-pointer shadow-sm transition-all"
-                >
-                  <button
-                    onClick={e => toggleFavorite(e, t.id)}
-                    className="absolute top-3 right-3 h-6 w-6 flex items-center justify-center rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/20 transition-colors cursor-pointer"
-                  >
-                    <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
-                  </button>
-                  <div className="mb-4"><span className="p-2 rounded-lg bg-zinc-200/50 dark:bg-zinc-800/60 inline-flex"><ToolIcon iconName={t.icon} className={`h-6 w-6 ${t.color}`} /></span></div>
-                  <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50">{t.name}</h3>
-                  <p className="text-xs text-zinc-400 mt-1 line-clamp-2">{t.desc}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )
-    }
-
-    // ── Templates Panel ───────────────────────────────────────────────
-    if (activeMenu === "templates") {
-      const templates = [
-        { title: "Merge & Compress", desc: "Combine multiple PDFs then shrink the file size", steps: ["merge", "compress"], emoji: "📦", color: "from-emerald-500/10 to-teal-500/10 border-emerald-500/20" },
-        { title: "Scan to PDF", desc: "Snap photos then convert images to a single PDF doc", steps: ["img2pdf"], emoji: "📸", color: "from-blue-500/10 to-sky-500/10 border-blue-500/20" },
-        { title: "Secure & Share", desc: "Password-protect your PDF before sending it", steps: ["protect"], emoji: "🔒", color: "from-indigo-500/10 to-purple-500/10 border-indigo-500/20" },
-        { title: "Sign Document", desc: "Draw your signature and stamp it onto the PDF", steps: ["sign"], emoji: "✍️", color: "from-teal-500/10 to-cyan-500/10 border-teal-500/20" },
-        { title: "PDF to Images", desc: "Export every page as a high-quality JPG file", steps: ["pdf2jpg"], emoji: "🖼️", color: "from-pink-500/10 to-rose-500/10 border-pink-500/20" },
-        { title: "Remove Password", desc: "Unlock an encrypted PDF with your password", steps: ["unlock"], emoji: "🔑", color: "from-amber-500/10 to-yellow-500/10 border-amber-500/20" },
-        { title: "Number Pages", desc: "Add page numbers to a document before printing", steps: ["pagenum"], emoji: "🔢", color: "from-cyan-500/10 to-sky-500/10 border-cyan-500/20" },
-        { title: "QR Code", desc: "Generate a branded QR code for a URL or contact", steps: ["qrgenerator"], emoji: "⬛", color: "from-purple-500/10 to-violet-500/10 border-purple-500/20" },
-        { title: "Flatten PDF", desc: "Flatten annotations and form fields into the page", steps: ["flatten"], emoji: "📄", color: "from-sky-500/10 to-blue-500/10 border-sky-500/20" },
-      ]
-      return (
-        <div className="flex-1 py-8 px-6 md:px-12 max-w-5xl mx-auto w-full animate-in fade-in duration-300">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="h-11 w-11 rounded-xl bg-violet-500/10 flex items-center justify-center">
-              <FileText className="h-5 w-5 text-violet-500" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-extrabold text-zinc-900 dark:text-zinc-50">Templates</h1>
-              <p className="text-sm text-zinc-400">Quick-start workflows for common tasks</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {templates.map((tpl, i) => {
-              const firstTool = tools.find(t => t.id === tpl.steps[0])
-              return (
-                <div
-                  key={i}
-                  onClick={() => firstTool && openTool(firstTool.id, firstTool.name)}
-                  className={`group flex flex-col gap-3 p-5 rounded-2xl border bg-gradient-to-br ${tpl.color} hover:scale-[1.02] cursor-pointer transition-all duration-200 shadow-sm`}
-                >
-                  <div className="text-3xl">{tpl.emoji}</div>
-                  <div>
-                    <h3 className="text-sm font-extrabold text-zinc-900 dark:text-zinc-50">{tpl.title}</h3>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed">{tpl.desc}</p>
-                  </div>
-                  <div className="flex items-center gap-1.5 mt-auto pt-1 flex-wrap">
-                    {tpl.steps.map(sid => {
-                      const st = tools.find(t => t.id === sid)
-                      return st ? (
-                        <span key={sid} className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/60 dark:bg-zinc-900/60 text-zinc-600 dark:text-zinc-400 border border-white/40 dark:border-zinc-700">{st.name}</span>
-                      ) : null
-                    })}
-                    <ChevronRight className="h-3.5 w-3.5 text-zinc-400 ml-auto group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </div>
-              )
-            })}
-          </div>
         </div>
       )
     }
@@ -898,37 +794,6 @@ function DashboardContent() {
                   <span className="ml-auto text-[10px] font-bold bg-zinc-300 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 px-1.5 py-0.5 rounded-full">{recentActivity.length}</span>
                 )}
               </button>
-              <button
-                onClick={() => { setActiveMenu("favorites"); setActiveTool(null) }}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all ${activeMenu === "favorites"
-                  ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 border border-zinc-300 dark:border-zinc-800"
-                  : "text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 border border-transparent"
-                  }`}
-              >
-                <Star className={`h-4 w-4 ${favoritedTools.length > 0 ? "text-amber-500 fill-amber-500" : ""}`} />
-                Favorites
-                {favoritedTools.length > 0 && (
-                  <span className="ml-auto text-[10px] font-bold bg-amber-400/20 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-full">{favoritedTools.length}</span>
-                )}
-              </button>
-              <button
-                onClick={() => toast({ title: "Cloud Storage", description: "Connect to Google Drive or Dropbox." })}
-                className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all border border-transparent"
-              >
-                <Cloud className="h-4 w-4" />
-                Cloud Storage
-              </button>
-              <button
-                onClick={() => { setActiveMenu("templates"); setActiveTool(null) }}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all ${activeMenu === "templates"
-                  ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 border border-zinc-300 dark:border-zinc-800"
-                  : "text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 border border-transparent"
-                  }`}
-              >
-                <FileText className="h-4 w-4" />
-                Templates
-              </button>
-
               {/* Bottom Actions */}
               <div className="flex flex-col gap-1 border-t border-zinc-200 dark:border-zinc-900 pt-3 mt-2">
                 <button
