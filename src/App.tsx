@@ -1,6 +1,6 @@
 import * as React from "react"
 import {
-  Search, Moon, Sun, Info, X,
+  Search, Moon, Sun, Info, X, Menu,
   Settings, Star, Clock, Home,
   Files, Split, Layers, Maximize2, Unlock,
   Shield, Crop, PenTool, FileDigit, Stamp,
@@ -81,6 +81,7 @@ function DashboardContent() {
   const [activeMenu, setActiveMenu] = React.useState("all-tools")
   const [showUpgradeModal, setShowUpgradeModal] = React.useState(false)
   const [showSecurityModal, setShowSecurityModal] = React.useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
   type UserTier = "free" | "medium" | "pro"
   const [userTier, setUserTier] = React.useState<UserTier>(() => {
     try {
@@ -270,6 +271,7 @@ function DashboardContent() {
   const openTool = (id: string, name: string) => {
     setActiveTool(id)
     setActiveMenu("all-tools")
+    setMobileMenuOpen(false)
     const entry = { id, name, ts: Date.now() }
     setRecentActivity(prev => {
       const updated = [entry, ...prev.filter(r => r.id !== id)].slice(0, 20)
@@ -824,7 +826,7 @@ function DashboardContent() {
             </div>
           ) : (
             /* Dedicated Vertical Scroll Grid Layout */
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 max-h-[500px] overflow-y-auto pr-2 pb-2 scroll-smooth">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-4 max-h-[520px] overflow-y-auto pr-1 sm:pr-2 pb-2 scroll-smooth">
               {filteredTools.map((t) => (
                 <div
                   key={t.id}
@@ -835,40 +837,40 @@ function DashboardContent() {
                       triggerPlaceholderToast(t.name)
                     }
                   }}
-                  className={`group relative flex flex-col p-4 rounded-xl border transition-all duration-200 text-left ${t.isActive
-                      ? "border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/40 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/45 cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                  className={`group relative flex flex-col p-2.5 sm:p-4 rounded-xl border transition-all duration-200 text-left ${t.isActive
+                      ? "border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/40 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/45 cursor-pointer shadow-xs hover:shadow-md hover:-translate-y-0.5"
                       : "border-zinc-200/50 dark:border-zinc-800/30 bg-zinc-100/20 dark:bg-zinc-900/10 cursor-not-allowed opacity-60"
                     }`}
                 >
-                  <div className="flex justify-between items-start mb-3">
-                    <span className="shrink-0 p-2 rounded-lg bg-zinc-200/50 dark:bg-zinc-800/60 group-hover:scale-110 transition-transform inline-flex">
-                      <ToolIcon iconName={t.icon} className={`h-5 w-5 ${t.color}`} />
+                  <div className="flex justify-between items-start mb-2 sm:mb-3">
+                    <span className="shrink-0 p-1.5 sm:p-2 rounded-lg bg-zinc-200/50 dark:bg-zinc-800/60 group-hover:scale-110 transition-transform inline-flex">
+                      <ToolIcon iconName={t.icon} className={`h-4 w-4 sm:h-5 sm:w-5 ${t.color}`} />
                     </span>
                     <div className="flex items-center gap-1">
                       {t.isActive && (
                         <button
                           onClick={e => toggleFavorite(e, t.id)}
-                          className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/20 transition-colors cursor-pointer"
+                          className="h-5 w-5 sm:h-6 sm:w-6 flex items-center justify-center rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/20 transition-colors cursor-pointer"
                           title={favoritedTools.includes(t.id) ? "Remove from favorites" : "Add to favorites"}
                         >
-                          <Star className={`h-3.5 w-3.5 transition-colors ${favoritedTools.includes(t.id) ? "text-amber-500 fill-amber-500" : "text-zinc-300 dark:text-zinc-600 group-hover:text-amber-400"
+                          <Star className={`h-3 w-3 sm:h-3.5 sm:w-3.5 transition-colors ${favoritedTools.includes(t.id) ? "text-amber-500 fill-amber-500" : "text-zinc-300 dark:text-zinc-600 group-hover:text-amber-400"
                             }`} />
                         </button>
                       )}
                       {!t.isActive && (
-                        <span className="text-[9px] font-bold tracking-wider text-zinc-400 dark:text-zinc-500 bg-zinc-200/40 dark:bg-zinc-800/30 px-1.5 py-0.5 rounded uppercase">Soon</span>
+                        <span className="text-[8px] sm:text-[9px] font-bold tracking-wider text-zinc-400 dark:text-zinc-500 bg-zinc-200/40 dark:bg-zinc-800/30 px-1 py-0.5 rounded uppercase">Soon</span>
                       )}
                     </div>
                   </div>
 
-                  <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 leading-snug">
+                  <h3 className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-50 leading-snug truncate">
                     {t.name}
                   </h3>
-                  <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1 line-clamp-2 leading-relaxed">
+                  <p className="text-[10px] sm:text-xs text-zinc-400 dark:text-zinc-500 mt-0.5 sm:mt-1 line-clamp-1 sm:line-clamp-2 leading-tight sm:leading-relaxed">
                     {t.desc}
                   </p>
                   {t.isActive && (
-                    <span className="mt-3 self-start text-[9px] font-bold tracking-wider text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded uppercase border border-emerald-500/10">Offline</span>
+                    <span className="mt-2 sm:mt-3 self-start text-[8px] sm:text-[9px] font-bold tracking-wider text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase border border-emerald-500/10">Offline</span>
                   )}
                 </div>
               ))}
@@ -882,8 +884,16 @@ function DashboardContent() {
   return (
     <div className="flex h-screen w-full overflow-hidden bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 transition-colors">
 
-      {/* Sidebar Layout — 100% Fixed & Stable */}
-      <aside className="w-[260px] h-full border-r border-white/10 dark:border-zinc-800/60 bg-white/60 dark:bg-zinc-950/70 backdrop-blur-xl shrink-0 hidden md:flex flex-col justify-between p-5 select-none shadow-[1px_0_24px_0_rgba(0,0,0,0.06)] dark:shadow-[1px_0_24px_0_rgba(0,0,0,0.3)] overflow-y-auto">
+      {/* Mobile Drawer Backdrop Overlay */}
+      {mobileMenuOpen && (
+        <div
+          onClick={() => setMobileMenuOpen(false)}
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-xs md:hidden animate-in fade-in duration-200"
+        />
+      )}
+
+      {/* Sidebar Layout — Mobile Responsive Drawer */}
+      <aside className={`fixed md:relative inset-y-0 left-0 z-50 w-[260px] h-full border-r border-white/10 dark:border-zinc-800/60 bg-white/95 dark:bg-zinc-950/95 md:bg-white/60 md:dark:bg-zinc-950/70 backdrop-blur-xl shrink-0 ${mobileMenuOpen ? "flex" : "hidden md:flex"} flex-col justify-between p-5 select-none shadow-2xl md:shadow-[1px_0_24px_0_rgba(0,0,0,0.06)] md:dark:shadow-[1px_0_24px_0_rgba(0,0,0,0.3)] overflow-y-auto transition-all duration-200`}>
         <div className="flex flex-col gap-6">
 
           {/* Logo */}
@@ -1140,10 +1150,17 @@ function DashboardContent() {
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
 
         {/* Top Navbar */}
-        <header className="h-14 border-b border-zinc-200 dark:border-zinc-900 px-6 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-950/50 backdrop-blur shrink-0 select-none">
+        <header className="h-14 border-b border-zinc-200 dark:border-zinc-900 px-3 sm:px-6 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-950/50 backdrop-blur shrink-0 select-none">
           <div className="flex items-center gap-2 md:hidden">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-1.5 rounded-lg bg-zinc-200/50 dark:bg-zinc-800/60 text-zinc-700 dark:text-zinc-300 cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
+              title="Toggle Menu"
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
             {/* Mobile Logo */}
-            <img src={theme === "dark" ? "/logo.png" : "/logo_light.png"} alt="GhostPDF Logo" className="h-14 w-14 object-contain rounded-md shrink-0" />
+            <img src={theme === "dark" ? "/logo.png" : "/logo_light.png"} alt="GhostPDF Logo" className="h-9 w-9 object-contain rounded-md shrink-0" />
             <span className="font-extrabold text-sm tracking-tight text-zinc-950 dark:text-zinc-50">GhostPDF</span>
           </div>
 

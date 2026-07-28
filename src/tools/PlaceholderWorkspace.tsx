@@ -119,7 +119,7 @@ export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, on
   }
 
   return (
-    <div className="flex-1 py-8 px-6 md:px-12 max-w-4xl mx-auto w-full animate-in fade-in duration-300">
+    <div className="flex-1 py-4 sm:py-8 px-3 sm:px-6 md:px-12 max-w-4xl mx-auto w-full animate-in fade-in duration-300">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
         <Button
