@@ -120,8 +120,8 @@ function DashboardContent() {
       return
     }
 
-    const amountInPaise = 100 // Test Mode Price: ₹1 INR (100 paise)
-    const planTitle = tier === "medium" ? "GhostPDF Medium Plan (12 Months - Test ₹1)" : "GhostPDF Pro Plan (12 Months - Test ₹1)"
+    const amountInPaise = tier === "medium" ? 19900 : 49900
+    const planTitle = tier === "medium" ? "GhostPDF Medium Plan (12 Months)" : "GhostPDF Pro Plan (12 Months)"
 
     let order_id = ""
     let amount = amountInPaise
@@ -172,7 +172,7 @@ function DashboardContent() {
       return
     }
 
-    const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_TIzcy9v8qqX82A"
+    const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_live_TJ05dWObToopMI"
 
     // STEP 3: Open Razorpay Modal
     const options: any = {
@@ -1106,15 +1106,14 @@ function DashboardContent() {
               </p>
             </div>
 
-            {/* Test Mode Credentials Notice */}
-            <div className="mb-4 p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-left space-y-1.5">
-              <p className="text-[11px] font-bold text-blue-700 dark:text-blue-300">
-                🧪 Testing GhostPDF Pro Features:
+            {/* Live Gateway Notice */}
+            <div className="mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-left space-y-1">
+              <p className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                🔒 Live Razorpay Payment Gateway
               </p>
-              <div className="text-[10px] text-zinc-700 dark:text-zinc-300 space-y-1 font-mono bg-blue-50/50 dark:bg-zinc-900/60 p-2 rounded-lg border border-blue-500/10">
-                <div>🏦 <strong>Netbanking (100% Guaranteed):</strong> Select <strong>SBI / HDFC</strong> &rarr; Click <strong>Success</strong></div>
-                <div>⚡ <strong>Instant Testing:</strong> Click <strong>1-Click Instant Activate Pro</strong> below!</div>
-              </div>
+              <p className="text-[10px] text-zinc-600 dark:text-zinc-400 leading-snug">
+                Supports real UPI (PhonePe, Google Pay, Paytm, BHIM), NetBanking, and Domestic/International Debit &amp; Credit Cards.
+              </p>
             </div>
 
             {/* Pricing Cards (3 Tiers: Free, Medium 12M, Pro 12M) */}
@@ -1138,11 +1137,11 @@ function DashboardContent() {
                 onClick={() => handleRazorpayPayment("medium")}
                 className={`p-3 rounded-xl border transition-all text-center relative cursor-pointer ${userTier === "medium" ? "border-blue-500 bg-blue-500/10" : "border-blue-500/30 bg-blue-500/5 hover:border-blue-500"}`}
               >
-                <span className="absolute top-0 right-0 bg-blue-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-bl">TEST ₹1</span>
+                <span className="absolute top-0 right-0 bg-blue-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-bl">STARTER</span>
                 <span className="text-[9px] font-bold tracking-wider text-blue-500 uppercase block">Medium</span>
-                <div className="text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">₹1 <span className="text-[8px] text-zinc-400">/ 12M</span></div>
+                <div className="text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">₹199 <span className="text-[8px] text-zinc-400">/ 12M</span></div>
                 <span className="text-[9px] text-zinc-400 block">50MB &bull; 10 Files</span>
-                <span className="mt-2 block text-[9px] font-bold text-blue-500">{userTier === "medium" ? "Active ⚡" : "Get Medium (₹1) ⚡"}</span>
+                <span className="mt-2 block text-[9px] font-bold text-blue-500">{userTier === "medium" ? "Active ⚡" : "Get Medium ⚡"}</span>
               </div>
 
               {/* Pro Tier */}
@@ -1150,11 +1149,11 @@ function DashboardContent() {
                 onClick={() => handleRazorpayPayment("pro")}
                 className={`p-3 rounded-xl border transition-all text-center relative cursor-pointer ${userTier === "pro" ? "border-amber-500 bg-amber-500/10" : "border-amber-500/40 bg-amber-500/10 hover:border-amber-500"}`}
               >
-                <span className="absolute top-0 right-0 bg-amber-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-bl">TEST ₹1</span>
+                <span className="absolute top-0 right-0 bg-amber-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-bl">UNLIMITED</span>
                 <span className="text-[9px] font-bold tracking-wider text-amber-500 uppercase block">Pro Unlimited</span>
-                <div className="text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">₹1 <span className="text-[8px] text-zinc-400">/ 12M</span></div>
+                <div className="text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">₹499 <span className="text-[8px] text-zinc-400">/ 12M</span></div>
                 <span className="text-[9px] text-zinc-400 block">Unlimited MB &bull; Files</span>
-                <span className="mt-2 block text-[9px] font-bold text-amber-500">{userTier === "pro" ? "Active 👑" : "Get Pro (₹1) 👑"}</span>
+                <span className="mt-2 block text-[9px] font-bold text-amber-500">{userTier === "pro" ? "Active 👑" : "Get Pro 👑"}</span>
               </div>
             </div>
 
@@ -1170,14 +1169,14 @@ function DashboardContent() {
                 onClick={() => handleRazorpayPayment("medium")}
                 className="py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs transition-all shadow-md shadow-blue-500/20 cursor-pointer flex items-center justify-center gap-1.5"
               >
-                <span>Medium Plan (₹1 Test)</span>
+                <span>Medium Plan (₹199)</span>
               </button>
 
               <button
                 onClick={() => handleRazorpayPayment("pro")}
                 className="py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-xs transition-all shadow-md shadow-amber-500/20 cursor-pointer flex items-center justify-center gap-1.5"
               >
-                <span>Pro Unlimited (₹1 Test)</span>
+                <span>Pro Unlimited (₹499)</span>
               </button>
             </div>
 
@@ -1224,7 +1223,7 @@ function DashboardContent() {
                 { title: "🔐 Web Cryptography API Standard", desc: "PDF encryption & decryption are executed using W3C WebCrypto native browser APIs with AES-256 bits." },
                 { title: "👁️ Zero Telemetry & Zero Cookies", desc: "GhostPDF contains zero analytics trackers, zero advertising cookies, and zero third-party telemetry." },
                 { title: "🛡️ Ephemeral RAM Memory Sandbox", desc: "Document buffers reside in volatile memory and are immediately garbage collected after processing." },
-                { title: "💳 PCI-DSS Compliant Razorpay Integration", desc: "All Pro upgrades are processed directly through Razorpay's 256-bit encrypted SSL payment gateway." }
+                { title: "💳 PCI-DSS Level 1 & HMAC-SHA256 Encrypted Payments", desc: "Razorpay 256-Bit SSL Encrypted Gateway with Server-side HMAC-SHA256 Signature Verification & Zero Card Data Storage." }
               ].map((item, index) => (
                 <div key={index} className="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 flex items-start gap-3">
                   <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
