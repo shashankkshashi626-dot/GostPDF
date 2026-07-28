@@ -578,14 +578,27 @@ function DashboardContent() {
       return (
         <div className="flex-1 py-8 px-6 md:px-12 max-w-5xl mx-auto w-full animate-in fade-in duration-300 space-y-6">
           {/* Settings Header */}
-          <div className="flex items-center gap-4 pb-6 border-b border-zinc-200 dark:border-zinc-800">
-            <div className="h-12 w-12 rounded-2xl bg-zinc-200/60 dark:bg-zinc-800/60 flex items-center justify-center shrink-0">
-              <Settings className="h-6 w-6 text-zinc-700 dark:text-zinc-300" />
+          <div className="flex items-center justify-between pb-6 border-b border-zinc-200 dark:border-zinc-800 flex-wrap gap-4">
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 rounded-2xl bg-zinc-200/60 dark:bg-zinc-800/60 flex items-center justify-center shrink-0">
+                <Settings className="h-6 w-6 text-zinc-700 dark:text-zinc-300" />
+              </div>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-extrabold text-zinc-900 dark:text-zinc-50 tracking-tight">System Settings</h1>
+                <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">Manage subscription, appearance, security audit, and help</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-extrabold text-zinc-900 dark:text-zinc-50 tracking-tight">System Settings</h1>
-              <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">Manage subscription cancellation, About Us, Help Guide, and appearance</p>
-            </div>
+
+            {/* Quick Theme Switcher */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="h-9 px-3 text-xs font-bold flex gap-2 items-center cursor-pointer border-zinc-300 dark:border-zinc-700 hover:bg-zinc-200 dark:hover:bg-zinc-800"
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-indigo-500" />}
+              <span>{theme === "dark" ? "Light Mode ☀️" : "Dark Mode 🌙"}</span>
+            </Button>
           </div>
 
           {/* 1. Membership & Subscription Settings (with Cancel Option) */}
@@ -1166,37 +1179,21 @@ function DashboardContent() {
 
           <div className="hidden md:block" />
 
-          {/* Theme switcher + Security status + About button + User Tier Badge */}
+          {/* Settings Button + User Tier Badge */}
           <div className="flex items-center gap-2">
             <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 h-9 w-9 shrink-0 cursor-pointer"
-            >
-              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </Button>
-
-            {/* Website Safety & Security Audit */}
-            <Button
               variant="outline"
               size="sm"
-              onClick={() => setShowSecurityModal(true)}
-              className="h-8 text-xs font-bold flex gap-1.5 items-center cursor-pointer border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/20"
-              title="100% Safe & Verified Client-Side Execution"
+              onClick={() => { setActiveMenu("settings"); setActiveTool(null); setMobileMenuOpen(false); }}
+              className={`h-8 text-xs font-bold flex gap-1.5 items-center cursor-pointer transition-colors ${
+                activeMenu === "settings"
+                  ? "bg-zinc-200 dark:bg-zinc-800 text-zinc-950 dark:text-zinc-50 border-zinc-400 dark:border-zinc-600"
+                  : "dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-300 dark:border-zinc-700"
+              }`}
+              title="Open System Settings"
             >
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-              <span className="hidden sm:inline">100% Safe 🔒</span>
-            </Button>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => { setActiveMenu("about"); setActiveTool(null); }}
-              className="h-8 text-xs font-bold flex gap-1.5 items-center cursor-pointer dark:hover:bg-zinc-900"
-            >
-              <Info className="h-3.5 w-3.5" />
-              About Us
+              <Settings className="h-3.5 w-3.5 text-cyan-500" />
+              <span>Settings</span>
             </Button>
 
             {userTier === "pro" ? (
