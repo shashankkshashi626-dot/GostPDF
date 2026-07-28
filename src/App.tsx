@@ -72,6 +72,7 @@ function DashboardContent() {
   const [activeTool, setActiveTool] = React.useState<string | null>(null)
   const [searchQuery, setSearchQuery] = React.useState("")
   const [activeMenu, setActiveMenu] = React.useState("all-tools")
+  const [showUpgradeModal, setShowUpgradeModal] = React.useState(false)
   const searchInputRef = React.useRef<HTMLInputElement>(null)
 
   // Favourites — stored in localStorage
@@ -505,6 +506,28 @@ function DashboardContent() {
               </span>
             )}
           </div>
+
+          {/* Top Banner - QR Generator */}
+          <div
+            onClick={() => setActiveTool("qrgenerator")}
+            className="w-full max-w-xl mt-6 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-purple-500/40 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/40 flex items-center justify-between cursor-pointer transition-all duration-200 shadow-sm"
+          >
+            <div className="flex items-center gap-4">
+              <div className="h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0">
+                <ScanText className="h-5 w-5 text-purple-500" />
+              </div>
+              <div className="text-left">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-zinc-900 dark:text-zinc-50">QR Generator</span>
+                  <span className="text-[9px] font-bold bg-purple-500 text-white px-1.5 py-0.5 rounded">NEW</span>
+                </div>
+                <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
+                  Generate QR Codes for URLs, Text, WiFi, Contacts &amp; more
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 text-zinc-400" />
+          </div>
         </div>
 
         {/* Section title & Tools Slider */}
@@ -591,28 +614,6 @@ function DashboardContent() {
               ))}
             </div>
           )}
-        </div>
-
-        {/* Bottom Banner - QR Generator */}
-        <div
-          onClick={() => setActiveTool("qrgenerator")}
-          className="mt-8 p-4 rounded-xl border border-zinc-200 dark:border-zinc-850 hover:border-zinc-400 dark:hover:border-zinc-600 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/40 flex items-center justify-between cursor-pointer transition-all duration-200 shadow-sm"
-        >
-          <div className="flex items-center gap-4">
-            <div className="h-10 w-10 rounded-lg bg-zinc-200/50 dark:bg-zinc-800/60 flex items-center justify-center shrink-0">
-              <ScanText className="h-5 w-5 text-zinc-900 dark:text-zinc-50" />
-            </div>
-            <div className="text-left">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-zinc-900 dark:text-zinc-50">QR Generator</span>
-                <span className="text-[9px] font-bold bg-purple-500 text-white px-1.5 py-0.5 rounded">NEW</span>
-              </div>
-              <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
-                Generate QR Codes for URLs, Text, WiFi, Contacts & more
-              </p>
-            </div>
-          </div>
-          <ChevronRight className="h-5 w-5 text-zinc-400" />
         </div>
       </div>
     )
@@ -923,12 +924,12 @@ function DashboardContent() {
           <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 flex items-center gap-1.5">
             Upgrade to GhostPDF Pro 👑
           </span>
-          <p className="text-[10px] text-zinc-400 dark:text-zinc-505 mt-1 leading-normal">
-            Unlock all premium tools, AI features & more.
+          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 leading-normal">
+            Unlock all premium tools, AI features &amp; supporter perks.
           </p>
           <Button
-            onClick={() => toast({ title: "Upgrade Pro", description: "Stripe payment integration coming soon." })}
-            className="w-full mt-3 h-8 text-xs font-bold gap-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-orange-500 dark:to-amber-500 dark:hover:from-orange-600 dark:hover:to-amber-600 text-white rounded-lg cursor-pointer border-none shadow-sm shadow-blue-500/20 dark:shadow-orange-500/20"
+            onClick={() => setShowUpgradeModal(true)}
+            className="w-full mt-3 h-8 text-xs font-bold gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg cursor-pointer border-none shadow-sm shadow-amber-500/20"
           >
             Upgrade Now 💎
           </Button>
@@ -949,7 +950,7 @@ function DashboardContent() {
 
           <div className="hidden md:block" />
 
-          {/* Theme switcher + AI Assistant + About button */}
+          {/* Theme switcher + AI Assistant + About button + Pro Upgrade */}
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
@@ -979,6 +980,14 @@ function DashboardContent() {
               <Info className="h-3.5 w-3.5" />
               About Us
             </Button>
+
+            <Button
+              size="sm"
+              onClick={() => setShowUpgradeModal(true)}
+              className="h-8 text-xs font-bold flex gap-1.5 items-center cursor-pointer bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-none shadow-sm shadow-amber-500/20"
+            >
+              Pro 👑
+            </Button>
           </div>
         </header>
 
@@ -987,6 +996,91 @@ function DashboardContent() {
           {renderMainContent()}
         </main>
       </div>
+
+      {/* Upgrade Pro Modal */}
+      {showUpgradeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative w-full max-w-lg p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl overflow-hidden">
+            {/* Close Button */}
+            <button
+              onClick={() => setShowUpgradeModal(false)}
+              className="absolute top-4 right-4 h-8 w-8 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-500 transition-colors cursor-pointer"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            {/* Header */}
+            <div className="text-center mb-6">
+              <div className="inline-flex p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 mb-3">
+                <span className="text-3xl">👑</span>
+              </div>
+              <h2 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight">GhostPDF Pro</h2>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                Unlock Unlimited Speed, Advanced AI Features &amp; Supporter Perks
+              </p>
+            </div>
+
+            {/* Feature Checklist */}
+            <div className="space-y-3 mb-6 bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+              {[
+                { title: "100% Unlimited Local Processing", desc: "No file size limits or hourly caps" },
+                { title: "All 24+ PDF & Image Tools", desc: "Full access to Merge, Split, Compress, OCR, Sign & QR" },
+                { title: "Offline AI Studio", desc: "Tesseract.js local OCR & smart watermark detection" },
+                { title: "Zero Ads & Zero Data Tracking", desc: "Your documents strictly stay on your local disk" },
+              ].map((feat, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div className="h-5 w-5 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                    ✓
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100">{feat.title}</h4>
+                    <p className="text-[10px] text-zinc-400">{feat.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pricing Cards */}
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              <div
+                onClick={() => {
+                  toast({ title: "Community Edition", description: "You are already using the free local edition!" })
+                  setShowUpgradeModal(false)
+                }}
+                className="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-900/40 hover:border-zinc-400 cursor-pointer transition-all text-center"
+              >
+                <span className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">Community</span>
+                <div className="text-lg font-black text-zinc-900 dark:text-zinc-50 mt-0.5">$0 <span className="text-[10px] font-normal text-zinc-400">/ forever</span></div>
+                <span className="mt-2 block text-[10px] font-semibold text-zinc-500">Current Plan</span>
+              </div>
+
+              <div
+                onClick={() => {
+                  toast({ title: "Pro Supporter Plan Activated! 🎉", description: "Thank you for supporting GhostPDF!" })
+                  setShowUpgradeModal(false)
+                }}
+                className="p-3.5 rounded-xl border border-amber-500/40 bg-gradient-to-b from-amber-500/10 to-orange-500/10 hover:border-amber-500 cursor-pointer transition-all text-center relative overflow-hidden shadow-sm"
+              >
+                <span className="absolute top-0 right-0 bg-amber-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-bl">POPULAR</span>
+                <span className="text-[10px] font-bold tracking-wider text-amber-500 uppercase">Pro Supporter</span>
+                <div className="text-lg font-black text-zinc-900 dark:text-zinc-50 mt-0.5">$9 <span className="text-[10px] font-normal text-zinc-400">/ mo</span></div>
+                <span className="mt-2 block text-[10px] font-bold text-amber-500">Get Pro ⚡</span>
+              </div>
+            </div>
+
+            {/* Bottom Actions */}
+            <button
+              onClick={() => {
+                toast({ title: "Pro Supporter Plan Activated! 🎉", description: "Thank you for supporting GhostPDF open source development!" })
+                setShowUpgradeModal(false)
+              }}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-xs transition-all shadow-md shadow-amber-500/20 cursor-pointer"
+            >
+              Activate GhostPDF Pro Now 💎
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   )
