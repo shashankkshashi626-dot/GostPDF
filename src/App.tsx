@@ -6,7 +6,8 @@ import {
   Shield, Crop, PenTool, FileDigit, Stamp,
   ScanText, FileDown, FileImage, FileText,
   BookOpen, RefreshCw, ArrowLeftRight, Clock as ClockIcon,
-  Image, Folder, Bot, Wrench, ChevronDown, ChevronRight, HelpCircle, Cloud, Sparkles
+  Image, Folder, Bot, Wrench, ChevronDown, ChevronRight, HelpCircle, Cloud, Sparkles,
+  LayoutGrid, SlidersHorizontal
 } from "lucide-react"
 
 const ToolIcon = ({ iconName, className }: { iconName: string, className?: string }) => {
@@ -72,6 +73,7 @@ function DashboardContent() {
   const [activeTool, setActiveTool] = React.useState<string | null>(null)
   const [searchQuery, setSearchQuery] = React.useState("")
   const [activeMenu, setActiveMenu] = React.useState("all-tools")
+  const [viewMode, setViewMode] = React.useState<"vertical" | "horizontal">("vertical")
   const searchInputRef = React.useRef<HTMLInputElement>(null)
 
   // Tools Horizontal Slider ref & scroll states
@@ -512,31 +514,61 @@ function DashboardContent() {
                 {filteredTools.length} {filteredTools.length === 1 ? "Tool" : "Tools"}
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <button
-                id="slide-left"
-                onClick={scrollSliderLeft}
-                disabled={!canScrollLeft}
-                className={`h-8 w-8 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-500 transition-all ${canScrollLeft
-                    ? "hover:bg-zinc-100 dark:hover:bg-zinc-900 cursor-pointer text-zinc-800 dark:text-zinc-200"
-                    : "opacity-40 cursor-not-allowed"
-                  }`}
-                title="Scroll left"
-              >
-                <ChevronRight className="h-4 w-4 rotate-180" />
-              </button>
-              <button
-                id="slide-right"
-                onClick={scrollSliderRight}
-                disabled={!canScrollRight}
-                className={`h-8 w-8 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-500 transition-all ${canScrollRight
-                    ? "hover:bg-zinc-100 dark:hover:bg-zinc-900 cursor-pointer text-zinc-800 dark:text-zinc-200"
-                    : "opacity-40 cursor-not-allowed"
-                  }`}
-                title="Scroll right"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
+            <div className="flex items-center gap-3">
+              {/* View mode toggle: Vertical Grid vs Horizontal Slider */}
+              <div className="flex items-center bg-zinc-200/60 dark:bg-zinc-900 p-1 rounded-lg border border-zinc-300 dark:border-zinc-800 gap-1">
+                <button
+                  onClick={() => setViewMode("vertical")}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${viewMode === "vertical"
+                      ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 shadow-sm"
+                      : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300"
+                    }`}
+                  title="Vertical scroll grid"
+                >
+                  <LayoutGrid className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Vertical</span>
+                </button>
+                <button
+                  onClick={() => setViewMode("horizontal")}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${viewMode === "horizontal"
+                      ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 shadow-sm"
+                      : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300"
+                    }`}
+                  title="Horizontal slider"
+                >
+                  <SlidersHorizontal className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Horizontal</span>
+                </button>
+              </div>
+
+              {viewMode === "horizontal" && (
+                <div className="flex items-center gap-1.5">
+                  <button
+                    id="slide-left"
+                    onClick={scrollSliderLeft}
+                    disabled={!canScrollLeft}
+                    className={`h-8 w-8 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-500 transition-all ${canScrollLeft
+                        ? "hover:bg-zinc-100 dark:hover:bg-zinc-900 cursor-pointer text-zinc-800 dark:text-zinc-200"
+                        : "opacity-40 cursor-not-allowed"
+                      }`}
+                    title="Scroll left"
+                  >
+                    <ChevronRight className="h-4 w-4 rotate-180" />
+                  </button>
+                  <button
+                    id="slide-right"
+                    onClick={scrollSliderRight}
+                    disabled={!canScrollRight}
+                    className={`h-8 w-8 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-500 transition-all ${canScrollRight
+                        ? "hover:bg-zinc-100 dark:hover:bg-zinc-900 cursor-pointer text-zinc-800 dark:text-zinc-200"
+                        : "opacity-40 cursor-not-allowed"
+                      }`}
+                    title="Scroll right"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -554,8 +586,59 @@ function DashboardContent() {
                 Clear search
               </button>
             </div>
+          ) : viewMode === "vertical" ? (
+            /* Vertical Scroll Grid Layout */
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 max-h-[640px] overflow-y-auto pr-2 pb-2 scroll-smooth">
+              {filteredTools.map((t) => (
+                <div
+                  key={t.id}
+                  onClick={() => {
+                    if (t.isActive) {
+                      openTool(t.id, t.name)
+                    } else {
+                      triggerPlaceholderToast(t.name)
+                    }
+                  }}
+                  className={`group relative flex flex-col p-4 rounded-xl border transition-all duration-200 text-left ${t.isActive
+                      ? "border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/40 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/45 cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                      : "border-zinc-200/50 dark:border-zinc-800/30 bg-zinc-100/20 dark:bg-zinc-900/10 cursor-not-allowed opacity-60"
+                    }`}
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <span className="shrink-0 p-2 rounded-lg bg-zinc-200/50 dark:bg-zinc-800/60 group-hover:scale-110 transition-transform inline-flex">
+                      <ToolIcon iconName={t.icon} className={`h-5 w-5 ${t.color}`} />
+                    </span>
+                    <div className="flex items-center gap-1">
+                      {t.isActive && (
+                        <button
+                          onClick={e => toggleFavorite(e, t.id)}
+                          className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/20 transition-colors cursor-pointer"
+                          title={favoritedTools.includes(t.id) ? "Remove from favorites" : "Add to favorites"}
+                        >
+                          <Star className={`h-3.5 w-3.5 transition-colors ${favoritedTools.includes(t.id) ? "text-amber-500 fill-amber-500" : "text-zinc-300 dark:text-zinc-600 group-hover:text-amber-400"
+                            }`} />
+                        </button>
+                      )}
+                      {!t.isActive && (
+                        <span className="text-[9px] font-bold tracking-wider text-zinc-400 dark:text-zinc-500 bg-zinc-200/40 dark:bg-zinc-800/30 px-1.5 py-0.5 rounded uppercase">Soon</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 leading-snug">
+                    {t.name}
+                  </h3>
+                  <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1 line-clamp-2 leading-relaxed">
+                    {t.desc}
+                  </p>
+                  {t.isActive && (
+                    <span className="mt-3 self-start text-[9px] font-bold tracking-wider text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded uppercase border border-emerald-500/10">Offline</span>
+                  )}
+                </div>
+              ))}
+            </div>
           ) : (
-            // Slider wrapper with blur-edge mask
+            /* Horizontal Slider Layout */
             <div className="relative group/slider">
               {/* Left blur edge */}
               <div className={`pointer-events-none absolute left-0 top-0 bottom-0 w-12 z-10 bg-gradient-to-r from-zinc-50 dark:from-zinc-950 to-transparent transition-opacity duration-300 ${canScrollLeft ? "opacity-100" : "opacity-0"
