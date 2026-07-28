@@ -186,11 +186,8 @@ function DashboardContent() {
     })
   }
 
-  // Collapsible accordion states
-  const [expandedMenus, setExpandedMenus] = React.useState<Record<string, boolean>>({
-    "pdf-tools": true,
-    "utilities": true
-  })
+  // Collapsible accordion states — collapsed by default
+  const [expandedMenus, setExpandedMenus] = React.useState<Record<string, boolean>>({})
 
   const toggleMenu = (menuKey: string) => {
     setExpandedMenus(prev => ({ ...prev, [menuKey]: !prev[menuKey] }))
