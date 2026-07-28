@@ -110,7 +110,7 @@ function DashboardContent() {
   }
 
   // Razorpay Multi-Tier Checkout Handler (12 Months Access)
-  const handleRazorpayPayment = (tier: "medium" | "pro" = "pro") => {
+  const handleRazorpayPayment = async (tier: "medium" | "pro" = "pro") => {
     if (!navigator.onLine) {
       toast({
         title: "🌐 Internet Connection Required",
@@ -123,18 +123,97 @@ function DashboardContent() {
     const amountInPaise = tier === "medium" ? 19900 : 49900
     const planTitle = tier === "medium" ? "GhostPDF Medium Plan (12 Months)" : "GhostPDF Pro Plan (12 Months)"
 
-    const script = document.createElement("script")
-    script.src = "https://checkout.razorpay.com/v1/checkout.js"
-    script.onload = () => {
+    try {
+      // STEP 1: Backend Create Order (/api/create-order)
+      const createOrderRes = await fetch("/api/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: amountInPaise,
+          currency: "INR",
+          receipt: `rcpt_${Date.now()}`
+        })
+      })
+
+      if (!createOrderRes.ok) {
+        const errData = await createOrderRes.json().catch(() => ({}))
+        throw new Error(errData.error || `Server error (${createOrderRes.status})`)
+      }
+
+      const orderData = await createOrderRes.json()
+      const { order_id, amount, currency } = orderData
+
+      // STEP 2: Load Razorpay Checkout SDK
+      const loadScript = () =>
+        new Promise<boolean>((resolve) => {
+          if (window.Razorpay) return resolve(true)
+          const script = document.createElement("script")
+          script.src = "https://checkout.razorpay.com/v1/checkout.js"
+          script.onload = () => resolve(true)
+          script.onerror = () => resolve(false)
+          document.body.appendChild(script)
+        })
+
+      const isLoaded = await loadScript()
+      if (!isLoaded) {
+        toast({
+          title: "Razorpay SDK Error",
+          description: "Could not load Razorpay checkout script. Please check your network connection.",
+          variant: "destructive"
+        })
+        return
+      }
+
+      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_TIzcy9v8qqX82A"
+
+      // STEP 3: Open Razorpay Modal with order_id
       const options = {
-        key: "rzp_test_1DP5mmOlF5G5ag", // Standard Razorpay Test Key Format
-        amount: amountInPaise,
-        currency: "INR",
+        key: razorpayKey,
+        amount: amount,
+        currency: currency,
         name: planTitle,
         description: `12 Months Access (${tier === "medium" ? "50MB Limit" : "Unlimited MB"})`,
         image: "/logo.png",
-        handler: function (response: any) {
-          activateTier(tier, response.razorpay_payment_id)
+        order_id: order_id,
+        handler: async function (response: any) {
+          // STEP 4: Backend Verify Signature (/api/verify-payment)
+          try {
+            const verifyRes = await fetch("/api/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              })
+            })
+
+            const verifyData = await verifyRes.json()
+            if (verifyRes.ok && verifyData.status === "success") {
+              activateTier(tier, response.razorpay_payment_id)
+            } else {
+              toast({
+                title: "❌ Payment Verification Failed",
+                description: verifyData.error || "Invalid signature returned from backend.",
+                variant: "destructive"
+              })
+            }
+          } catch (err: any) {
+            toast({
+              title: "Verification Request Error",
+              description: err.message || "Failed to reach verification endpoint.",
+              variant: "destructive"
+            })
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            toast({
+              title: "Checkout Cancelled",
+              description: "Razorpay payment window was dismissed.",
+              variant: "destructive"
+            })
+          }
         },
         prefill: {
           name: "GhostPDF Member",
@@ -144,27 +223,24 @@ function DashboardContent() {
           color: tier === "medium" ? "#3b82f6" : "#f59e0b"
         }
       }
-      try {
-        if (window.Razorpay) {
-          const rzp = new window.Razorpay(options)
-          rzp.on("payment.failed", function (response: any) {
-            console.warn("Razorpay Checkout Callback:", response)
-            // Seamless test-mode activation fallback if test key fails
-            activateTier(tier, "rzp_test_" + Math.random().toString(36).substring(2, 9))
-          })
-          rzp.open()
-        } else {
-          activateTier(tier, "demo_rzp_100")
-        }
-      } catch (err) {
-        console.error("Razorpay SDK Exception:", err)
-        activateTier(tier, "demo_rzp_100")
-      }
+
+      const rzp = new window.Razorpay(options)
+      rzp.on("payment.failed", function (response: any) {
+        toast({
+          title: "Payment Transaction Failed",
+          description: response.error?.description || "Payment attempt failed.",
+          variant: "destructive"
+        })
+      })
+      rzp.open()
+    } catch (error: any) {
+      console.error("Razorpay Checkout Error:", error)
+      toast({
+        title: "Checkout Error",
+        description: error.message || "Failed to create order on server.",
+        variant: "destructive"
+      })
     }
-    script.onerror = () => {
-      activateTier(tier, "demo_rzp_100")
-    }
-    document.body.appendChild(script)
   }
 
   const searchInputRef = React.useRef<HTMLInputElement>(null)
