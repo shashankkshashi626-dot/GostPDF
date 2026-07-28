@@ -1109,12 +1109,11 @@ function DashboardContent() {
             {/* Test Mode Credentials Notice */}
             <div className="mb-4 p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-left space-y-1.5">
               <p className="text-[11px] font-bold text-blue-700 dark:text-blue-300">
-                🧪 Razorpay Test Mode Options (Select Netbanking or Domestic Card):
+                🧪 Testing GhostPDF Pro Features:
               </p>
               <div className="text-[10px] text-zinc-700 dark:text-zinc-300 space-y-1 font-mono bg-blue-50/50 dark:bg-zinc-900/60 p-2 rounded-lg border border-blue-500/10">
-                <div>🏦 <strong>Netbanking (Fastest):</strong> Select <strong>SBI / HDFC</strong> &rarr; Click <strong>Success</strong></div>
-                <div>💳 <strong>Domestic Card:</strong> 4012 0000 0000 0002 &bull; CVV: 123 &bull; Exp: 12/30</div>
-                <div>📱 <strong>Test UPI VPA:</strong> success@razorpay</div>
+                <div>🏦 <strong>Netbanking (100% Guaranteed):</strong> Select <strong>SBI / HDFC</strong> &rarr; Click <strong>Success</strong></div>
+                <div>⚡ <strong>Instant Testing:</strong> Click <strong>1-Click Instant Activate Pro</strong> below!</div>
               </div>
             </div>
 
@@ -1179,6 +1178,16 @@ function DashboardContent() {
                 className="py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-xs transition-all shadow-md shadow-amber-500/20 cursor-pointer flex items-center justify-center gap-1.5"
               >
                 <span>Pro Unlimited (₹1 Test)</span>
+              </button>
+            </div>
+
+            {/* 1-Click Test Mode Instant Activation */}
+            <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-800 text-center">
+              <button
+                onClick={() => activateTier("pro", "demo_instant_pro")}
+                className="text-[11px] font-bold text-amber-500 hover:text-amber-600 underline cursor-pointer"
+              >
+                ⚡ 1-Click Instant Activate Pro (Bypass Test Checkout)
               </button>
             </div>
           </div>
