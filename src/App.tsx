@@ -74,6 +74,81 @@ function DashboardContent() {
   const [activeMenu, setActiveMenu] = React.useState("all-tools")
   const searchInputRef = React.useRef<HTMLInputElement>(null)
 
+  // Tools Horizontal Slider ref & scroll states
+  const sliderRef = React.useRef<HTMLDivElement>(null)
+  const [canScrollLeft, setCanScrollLeft] = React.useState(false)
+  const [canScrollRight, setCanScrollRight] = React.useState(true)
+
+  // Drag-to-scroll tracking
+  const [isMouseDown, setIsMouseDown] = React.useState(false)
+  const [startX, setStartX] = React.useState(0)
+  const [scrollLeftPos, setScrollLeftPos] = React.useState(0)
+  const [dragged, setDragged] = React.useState(false)
+
+  const updateScrollState = React.useCallback(() => {
+    const el = sliderRef.current
+    if (!el) return
+    setCanScrollLeft(el.scrollLeft > 5)
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 5)
+  }, [])
+
+  // Mouse wheel & resize horizontal scroll handler
+  React.useEffect(() => {
+    const el = sliderRef.current
+    if (!el) return
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault()
+        el.scrollBy({ left: e.deltaY * 1.5, behavior: "smooth" })
+      }
+    }
+
+    el.addEventListener("wheel", handleWheel, { passive: false })
+    el.addEventListener("scroll", updateScrollState)
+    window.addEventListener("resize", updateScrollState)
+
+    updateScrollState()
+
+    return () => {
+      el.removeEventListener("wheel", handleWheel)
+      el.removeEventListener("scroll", updateScrollState)
+      window.removeEventListener("resize", updateScrollState)
+    }
+  }, [updateScrollState])
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const el = sliderRef.current
+    if (!el) return
+    setIsMouseDown(true)
+    setDragged(false)
+    setStartX(e.pageX - el.offsetLeft)
+    setScrollLeftPos(el.scrollLeft)
+  }
+
+  const handleMouseLeave = () => setIsMouseDown(false)
+  const handleMouseUp = () => setIsMouseDown(false)
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isMouseDown || !sliderRef.current) return
+    e.preventDefault()
+    const el = sliderRef.current
+    const x = e.pageX - el.offsetLeft
+    const walk = (x - startX) * 1.5
+    if (Math.abs(walk) > 5) {
+      setDragged(true)
+    }
+    el.scrollLeft = scrollLeftPos - walk
+  }
+
+  const scrollSliderLeft = () => {
+    sliderRef.current?.scrollBy({ left: -360, behavior: "smooth" })
+  }
+
+  const scrollSliderRight = () => {
+    sliderRef.current?.scrollBy({ left: 360, behavior: "smooth" })
+  }
+
   // Favourites — stored in localStorage
   const [favoritedTools, setFavoritedTools] = React.useState<string[]>(() => {
     try { return JSON.parse(localStorage.getItem("ghostpdf_favorites") || "[]") } catch { return [] }
@@ -440,21 +515,25 @@ function DashboardContent() {
             <div className="flex items-center gap-2">
               <button
                 id="slide-left"
-                onClick={() => {
-                  const el = document.getElementById("tools-slider")
-                  if (el) el.scrollBy({ left: -360, behavior: "smooth" })
-                }}
-                className="h-8 w-8 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-500 cursor-pointer transition-colors"
+                onClick={scrollSliderLeft}
+                disabled={!canScrollLeft}
+                className={`h-8 w-8 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-500 transition-all ${canScrollLeft
+                    ? "hover:bg-zinc-100 dark:hover:bg-zinc-900 cursor-pointer text-zinc-800 dark:text-zinc-200"
+                    : "opacity-40 cursor-not-allowed"
+                  }`}
+                title="Scroll left"
               >
                 <ChevronRight className="h-4 w-4 rotate-180" />
               </button>
               <button
                 id="slide-right"
-                onClick={() => {
-                  const el = document.getElementById("tools-slider")
-                  if (el) el.scrollBy({ left: 360, behavior: "smooth" })
-                }}
-                className="h-8 w-8 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-500 cursor-pointer transition-colors"
+                onClick={scrollSliderRight}
+                disabled={!canScrollRight}
+                className={`h-8 w-8 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-500 transition-all ${canScrollRight
+                    ? "hover:bg-zinc-100 dark:hover:bg-zinc-900 cursor-pointer text-zinc-800 dark:text-zinc-200"
+                    : "opacity-40 cursor-not-allowed"
+                  }`}
+                title="Scroll right"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
@@ -477,22 +556,34 @@ function DashboardContent() {
             </div>
           ) : (
             // Slider wrapper with blur-edge mask
-            <div className="relative">
+            <div className="relative group/slider">
               {/* Left blur edge */}
-              <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-r from-zinc-50 dark:from-zinc-950 to-transparent" />
+              <div className={`pointer-events-none absolute left-0 top-0 bottom-0 w-12 z-10 bg-gradient-to-r from-zinc-50 dark:from-zinc-950 to-transparent transition-opacity duration-300 ${canScrollLeft ? "opacity-100" : "opacity-0"
+                }`} />
               {/* Right blur edge */}
-              <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-l from-zinc-50 dark:from-zinc-950 to-transparent" />
+              <div className={`pointer-events-none absolute right-0 top-0 bottom-0 w-12 z-10 bg-gradient-to-l from-zinc-50 dark:from-zinc-950 to-transparent transition-opacity duration-300 ${canScrollRight ? "opacity-100" : "opacity-0"
+                }`} />
 
               {/* Scrollable row */}
               <div
                 id="tools-slider"
-                className="flex gap-3 overflow-x-auto scroll-smooth pb-4 px-2"
-                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                ref={sliderRef}
+                onMouseDown={handleMouseDown}
+                onMouseLeave={handleMouseLeave}
+                onMouseUp={handleMouseUp}
+                onMouseMove={handleMouseMove}
+                className={`flex gap-3 overflow-x-auto scroll-smooth pb-4 pt-1 px-2 select-none ${isMouseDown ? "cursor-grabbing" : "cursor-grab"
+                  }`}
+                style={{
+                  scrollbarWidth: "thin",
+                  scrollbarColor: theme === "dark" ? "#27272a transparent" : "#d4d4d8 transparent"
+                }}
               >
                 {filteredTools.map((t) => (
                   <div
                     key={t.id}
                     onClick={() => {
+                      if (dragged) return
                       if (t.isActive) {
                         openTool(t.id, t.name)
                       } else {
