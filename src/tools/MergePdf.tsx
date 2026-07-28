@@ -11,7 +11,7 @@ interface MergeFile {
   size: string
 }
 
-export function MergePdf({ onBack, isProUser, onRequirePro }: { onBack: () => void; isProUser?: boolean; onRequirePro?: () => void }) {
+export function MergePdf({ onBack, userTier = "free", onRequirePro }: { onBack: () => void; userTier?: "free" | "medium" | "pro"; onRequirePro?: () => void }) {
   const [files, setFiles] = React.useState<MergeFile[]>([])
   const [isMerging, setIsMerging] = React.useState(false)
   const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null)
@@ -31,25 +31,28 @@ export function MergePdf({ onBack, isProUser, onRequirePro }: { onBack: () => vo
   // Handle file addition
   const handleFiles = (newFiles: FileList) => {
     const pdfs: MergeFile[] = []
+    const maxMb = userTier === "pro" ? Infinity : userTier === "medium" ? 50 : 10
+    const maxFiles = userTier === "pro" ? Infinity : userTier === "medium" ? 10 : 3
+
     for (let i = 0; i < newFiles.length; i++) {
       const file = newFiles[i]
       if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
-        // Enforce 10MB size limit for Free users
-        if (!isProUser && file.size > 10 * 1024 * 1024) {
+        // Enforce file size limit based on user tier
+        if (file.size > maxMb * 1024 * 1024) {
           toast({
-            title: "⚠️ Free Limit: 10 MB Max per File",
-            description: `"${file.name}" is ${(file.size / (1024 * 1024)).toFixed(1)} MB. Upgrade to GhostPDF Pro for Unlimited File Sizes! 👑`,
+            title: `⚠️ ${userTier === "medium" ? "Medium Plan" : "Free Tier"} Limit: ${maxMb} MB Max`,
+            description: `"${file.name}" is ${(file.size / (1024 * 1024)).toFixed(1)} MB. Upgrade to Pro for Unlimited File Sizes! 👑`,
             variant: "destructive"
           })
           if (onRequirePro) onRequirePro()
           continue
         }
 
-        // Enforce 3 files max for Free users
-        if (!isProUser && files.length + pdfs.length >= 3) {
+        // Enforce batch files limit based on user tier
+        if (files.length + pdfs.length >= maxFiles) {
           toast({
-            title: "⚠️ Free Limit: 3 Files Max Batch",
-            description: "Free version allows max 3 files. Upgrade to GhostPDF Pro for Unlimited Batching! 👑",
+            title: `⚠️ ${userTier === "medium" ? "Medium Plan" : "Free Tier"} Limit: ${maxFiles} Files Max`,
+            description: `${userTier === "medium" ? "Medium plan" : "Free tier"} allows max ${maxFiles} files. Upgrade to Pro for Unlimited Batching! 👑`,
             variant: "destructive"
           })
           if (onRequirePro) onRequirePro()

@@ -81,50 +81,67 @@ function DashboardContent() {
   const [activeMenu, setActiveMenu] = React.useState("all-tools")
   const [showUpgradeModal, setShowUpgradeModal] = React.useState(false)
   const [showSecurityModal, setShowSecurityModal] = React.useState(false)
-  const [isProUser, setIsProUser] = React.useState<boolean>(() => {
-    try { return localStorage.getItem("ghostpdf_pro") === "true" } catch { return false }
+  type UserTier = "free" | "medium" | "pro"
+  const [userTier, setUserTier] = React.useState<UserTier>(() => {
+    try {
+      const stored = localStorage.getItem("ghostpdf_tier")
+      if (stored === "pro" || stored === "medium") return stored as UserTier
+      if (localStorage.getItem("ghostpdf_pro") === "true") return "pro"
+      return "free"
+    } catch {
+      return "free"
+    }
   })
 
-  const activateProUser = (paymentId?: string) => {
-    setIsProUser(true)
-    try { localStorage.setItem("ghostpdf_pro", "true") } catch {}
-    toast({
-      title: "🎉 GhostPDF Pro Activated!",
-      description: paymentId ? `Payment ID: ${paymentId}. Unlimited file sizes & batching unlocked!` : "Unlimited file sizes & batching unlocked!",
-      variant: "success"
-    })
+  const activateTier = (tier: "medium" | "pro", paymentId?: string) => {
+    setUserTier(tier)
+    try {
+      localStorage.setItem("ghostpdf_tier", tier)
+      if (tier === "pro") localStorage.setItem("ghostpdf_pro", "true")
+    } catch {}
+
+    const title = tier === "pro" ? "🎉 GhostPDF Pro (12 Months) Activated!" : "⚡ GhostPDF Medium (12 Months) Activated!"
+    const desc = tier === "pro"
+      ? `Payment ID: ${paymentId || "rzp_live"}. UNLIMITED file sizes & batching active for 12 Months!`
+      : `Payment ID: ${paymentId || "rzp_live"}. 50 MB file size & 10 files batching active for 12 Months!`
+
+    toast({ title, description: desc, variant: "success" })
     setShowUpgradeModal(false)
   }
 
-  // Razorpay Pro Checkout Handler
-  const handleRazorpayPayment = () => {
+  // Razorpay Multi-Tier Checkout Handler (12 Months Access)
+  const handleRazorpayPayment = (tier: "medium" | "pro" = "pro") => {
     if (!navigator.onLine) {
       toast({
-        title: "🌐 Internet Connection Required to Upgrade",
-        description: "An active internet connection is needed once during Razorpay checkout. Once upgraded, GhostPDF Pro works 100% offline without limits!",
+        title: "🌐 Internet Connection Required",
+        description: "An active internet connection is needed once during Razorpay checkout. All tools work 100% offline after activation!",
         variant: "destructive"
       })
       return
     }
+
+    const amountInPaise = tier === "medium" ? 19900 : 49900
+    const planTitle = tier === "medium" ? "GhostPDF Medium Plan (12 Months)" : "GhostPDF Pro Plan (12 Months)"
+
     const script = document.createElement("script")
     script.src = "https://checkout.razorpay.com/v1/checkout.js"
     script.onload = () => {
       const options = {
         key: "rzp_test_ghostpdf",
-        amount: 49900,
+        amount: amountInPaise,
         currency: "INR",
-        name: "GhostPDF Pro",
-        description: "GhostPDF Pro Membership & Supporter Plan",
+        name: planTitle,
+        description: `12 Months Access (${tier === "medium" ? "50MB Limit" : "Unlimited MB"})`,
         image: "/logo.png",
         handler: function (response: any) {
-          activateProUser(response.razorpay_payment_id)
+          activateTier(tier, response.razorpay_payment_id)
         },
         prefill: {
-          name: "GhostPDF Pro Member",
-          email: "pro@ghostpdf.com"
+          name: "GhostPDF Member",
+          email: "user@ghostpdf.com"
         },
         theme: {
-          color: "#f59e0b"
+          color: tier === "medium" ? "#3b82f6" : "#f59e0b"
         }
       }
       if (window.Razorpay) {
@@ -138,11 +155,11 @@ function DashboardContent() {
         })
         rzp.open()
       } else {
-        activateProUser("demo_rzp_100")
+        activateTier(tier, "demo_rzp_100")
       }
     }
     script.onerror = () => {
-      activateProUser("demo_rzp_100")
+      activateTier(tier, "demo_rzp_100")
     }
     document.body.appendChild(script)
   }
@@ -255,7 +272,7 @@ function DashboardContent() {
   const renderMainContent = () => {
     const toolProps = {
       onBack: () => setActiveTool(null),
-      isProUser,
+      userTier,
       onRequirePro: () => setShowUpgradeModal(true)
     }
 
@@ -469,10 +486,20 @@ function DashboardContent() {
 
           {/* File Limits Indicator Banner */}
           <div className="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-100/60 dark:bg-zinc-900/60 text-xs font-semibold shadow-xs">
-            {isProUser ? (
+            {userTier === "pro" ? (
               <span className="text-amber-500 font-extrabold flex items-center gap-1.5">
-                👑 GhostPDF Pro Active: UNLIMITED File Sizes &amp; Unlimited Batching
+                👑 GhostPDF Pro Active: UNLIMITED File Sizes &amp; Unlimited Batching (12 Months)
               </span>
+            ) : userTier === "medium" ? (
+              <div className="flex items-center gap-2 text-blue-500 font-bold">
+                <span>⚡ Medium Plan Active: 50 MB Max &bull; 10 Files Batch (12 Months)</span>
+                <button
+                  onClick={() => setShowUpgradeModal(true)}
+                  className="text-amber-500 hover:text-amber-600 font-extrabold underline cursor-pointer"
+                >
+                  Upgrade to Pro 👑
+                </button>
+              </div>
             ) : (
               <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
                 <span>Free Version: 10 MB Max per File &bull; 3 Files Batch</span>
@@ -480,7 +507,7 @@ function DashboardContent() {
                   onClick={() => setShowUpgradeModal(true)}
                   className="text-amber-500 hover:text-amber-600 font-extrabold underline cursor-pointer"
                 >
-                  Upgrade to Pro for Unlimited 👑
+                  Upgrade Plans ⚡
                 </button>
               </div>
             )}
@@ -851,21 +878,23 @@ function DashboardContent() {
             </nav>
         </div>
 
-        {/* Upgrade Pro Widget */}
-        <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-900 bg-zinc-100/50 dark:bg-zinc-900/30">
-          <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 flex items-center gap-1.5">
-            Upgrade to GhostPDF Pro 👑
-          </span>
-          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 leading-normal">
-            Unlock all premium tools, batch processing &amp; supporter perks.
-          </p>
-          <Button
-            onClick={() => setShowUpgradeModal(true)}
-            className="w-full mt-3 h-8 text-xs font-bold gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg cursor-pointer border-none shadow-sm shadow-amber-500/20"
-          >
-            Upgrade Now 💎
-          </Button>
-        </div>
+        {/* Sidebar Upgrade / Status Widget */}
+        {userTier !== "pro" && (
+          <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-900 bg-zinc-100/50 dark:bg-zinc-900/30">
+            <span className="text-xs font-bold text-zinc-800 dark:text-zinc-200 flex items-center gap-1.5">
+              {userTier === "medium" ? "Medium Plan Active ⚡" : "Upgrade to Pro 👑"}
+            </span>
+            <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 leading-normal">
+              {userTier === "medium" ? "50 MB limit active. Upgrade to Pro for Unlimited MB!" : "Unlock Unlimited File Sizes & 12 Months Access."}
+            </p>
+            <Button
+              onClick={() => setShowUpgradeModal(true)}
+              className="w-full mt-3 h-8 text-xs font-bold gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg cursor-pointer border-none shadow-sm shadow-amber-500/20"
+            >
+              {userTier === "medium" ? "Upgrade to Pro 👑" : "Upgrade Now ⚡"}
+            </Button>
+          </div>
+        )}
 
       </aside>
 
@@ -882,7 +911,7 @@ function DashboardContent() {
 
           <div className="hidden md:block" />
 
-          {/* Theme switcher + Security status + AI Assistant + About button + Pro Upgrade */}
+          {/* Theme switcher + Security status + About button + User Tier Badge */}
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
@@ -915,13 +944,31 @@ function DashboardContent() {
               About Us
             </Button>
 
-            <Button
-              size="sm"
-              onClick={() => setShowUpgradeModal(true)}
-              className="h-8 text-xs font-bold flex gap-1.5 items-center cursor-pointer bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-none shadow-sm shadow-amber-500/20"
-            >
-              Pro 👑
-            </Button>
+            {userTier === "pro" ? (
+              <Button
+                size="sm"
+                onClick={() => toast({ title: "👑 GhostPDF Pro Active", description: "Your 12-Month Pro Membership is active with Unlimited File Sizes & Unlimited Batching!" })}
+                className="h-8 text-xs font-extrabold flex gap-1.5 items-center cursor-pointer bg-gradient-to-r from-amber-500 to-orange-500 text-white border-none shadow-sm shadow-amber-500/20"
+              >
+                Pro 👑
+              </Button>
+            ) : userTier === "medium" ? (
+              <Button
+                size="sm"
+                onClick={() => setShowUpgradeModal(true)}
+                className="h-8 text-xs font-bold flex gap-1.5 items-center cursor-pointer bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-none shadow-sm shadow-blue-500/20"
+              >
+                Medium ⚡
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                onClick={() => setShowUpgradeModal(true)}
+                className="h-8 text-xs font-bold flex gap-1.5 items-center cursor-pointer bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-zinc-700"
+              >
+                Free ⚡
+              </Button>
+            )}
           </div>
         </header>
 
@@ -982,28 +1029,44 @@ function DashboardContent() {
               </p>
             </div>
 
-            {/* Pricing Cards */}
-            <div className="grid grid-cols-2 gap-3 mb-4">
+            {/* Pricing Cards (3 Tiers: Free, Medium 12M, Pro 12M) */}
+            <div className="grid grid-cols-3 gap-2.5 mb-4">
+              {/* Free Tier */}
               <div
                 onClick={() => {
-                  toast({ title: "Community Edition", description: "You are already using the free local edition!" })
+                  toast({ title: "Free Plan", description: "You are on the free tier (10 MB limit & 3 files batch)." })
                   setShowUpgradeModal(false)
                 }}
-                className="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-900/40 hover:border-zinc-400 cursor-pointer transition-all text-center"
+                className={`p-3 rounded-xl border transition-all text-center cursor-pointer ${userTier === "free" ? "border-zinc-400 dark:border-zinc-600 bg-zinc-200/50 dark:bg-zinc-800/60" : "border-zinc-200 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-900/40 hover:border-zinc-400"}`}
               >
-                <span className="text-[10px] font-bold tracking-wider text-zinc-400 uppercase">Community</span>
-                <div className="text-lg font-black text-zinc-900 dark:text-zinc-50 mt-0.5">$0 <span className="text-[10px] font-normal text-zinc-400">/ forever</span></div>
-                <span className="mt-2 block text-[10px] font-semibold text-zinc-500">Current Free Plan</span>
+                <span className="text-[9px] font-bold tracking-wider text-zinc-400 uppercase block">Free Tier</span>
+                <div className="text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">$0</div>
+                <span className="text-[9px] text-zinc-400 block">10MB &bull; 3 Files</span>
+                <span className="mt-2 block text-[9px] font-semibold text-zinc-500">{userTier === "free" ? "Current" : "Free"}</span>
               </div>
 
+              {/* Medium Tier */}
               <div
-                onClick={handleRazorpayPayment}
-                className="p-3.5 rounded-xl border border-amber-500/40 bg-gradient-to-b from-amber-500/10 to-orange-500/10 hover:border-amber-500 cursor-pointer transition-all text-center relative overflow-hidden shadow-sm"
+                onClick={() => handleRazorpayPayment("medium")}
+                className={`p-3 rounded-xl border transition-all text-center relative cursor-pointer ${userTier === "medium" ? "border-blue-500 bg-blue-500/10" : "border-blue-500/30 bg-blue-500/5 hover:border-blue-500"}`}
               >
-                <span className="absolute top-0 right-0 bg-amber-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-bl">RAZORPAY</span>
-                <span className="text-[10px] font-bold tracking-wider text-amber-500 uppercase">Pro Supporter</span>
-                <div className="text-lg font-black text-zinc-900 dark:text-zinc-50 mt-0.5">₹499 <span className="text-[10px] font-normal text-zinc-400">/ lifetime</span></div>
-                <span className="mt-2 block text-[10px] font-bold text-amber-500">Pay with Razorpay ⚡</span>
+                <span className="absolute top-0 right-0 bg-blue-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-bl">LOW PRICE</span>
+                <span className="text-[9px] font-bold tracking-wider text-blue-500 uppercase block">Medium</span>
+                <div className="text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">₹199 <span className="text-[8px] text-zinc-400">/ 12M</span></div>
+                <span className="text-[9px] text-zinc-400 block">50MB &bull; 10 Files</span>
+                <span className="mt-2 block text-[9px] font-bold text-blue-500">{userTier === "medium" ? "Active ⚡" : "Get Medium ⚡"}</span>
+              </div>
+
+              {/* Pro Tier */}
+              <div
+                onClick={() => handleRazorpayPayment("pro")}
+                className={`p-3 rounded-xl border transition-all text-center relative cursor-pointer ${userTier === "pro" ? "border-amber-500 bg-amber-500/10" : "border-amber-500/40 bg-amber-500/10 hover:border-amber-500"}`}
+              >
+                <span className="absolute top-0 right-0 bg-amber-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-bl">UNLIMITED</span>
+                <span className="text-[9px] font-bold tracking-wider text-amber-500 uppercase block">Pro Unlimited</span>
+                <div className="text-base font-black text-zinc-900 dark:text-zinc-50 mt-0.5">₹499 <span className="text-[8px] text-zinc-400">/ 12M</span></div>
+                <span className="text-[9px] text-zinc-400 block">Unlimited MB &bull; Files</span>
+                <span className="mt-2 block text-[9px] font-bold text-amber-500">{userTier === "pro" ? "Active 👑" : "Get Pro 👑"}</span>
               </div>
             </div>
 
@@ -1013,14 +1076,22 @@ function DashboardContent() {
               <span>Secured by Razorpay • UPI / Cards / NetBanking / Wallets</span>
             </div>
 
-            {/* Razorpay Checkout Action Button */}
-            <button
-              onClick={handleRazorpayPayment}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-xs transition-all shadow-lg shadow-amber-500/20 cursor-pointer flex items-center justify-center gap-2"
-            >
-              <span>Pay with Razorpay (₹499)</span>
-              <ChevronRight className="h-4 w-4" />
-            </button>
+            {/* Action Buttons */}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => handleRazorpayPayment("medium")}
+                className="py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs transition-all shadow-md shadow-blue-500/20 cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <span>Medium Plan (₹199)</span>
+              </button>
+
+              <button
+                onClick={() => handleRazorpayPayment("pro")}
+                className="py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-xs transition-all shadow-md shadow-amber-500/20 cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <span>Pro Unlimited (₹499)</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -8,7 +8,7 @@ import * as pdfjsLib from "pdfjs-dist"
 // Set CDN worker path for pdfjs-dist v4.4.168
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs`
 
-export function CompressPdf({ onBack, isProUser, onRequirePro }: { onBack: () => void; isProUser?: boolean; onRequirePro?: () => void }) {
+export function CompressPdf({ onBack, userTier = "free", onRequirePro }: { onBack: () => void; userTier?: "free" | "medium" | "pro"; onRequirePro?: () => void }) {
   const [file, setFile] = React.useState<File | null>(null)
   const [quality, setQuality] = React.useState(0.6) // Default 60%
   const [isProcessing, setIsProcessing] = React.useState(false)
@@ -35,10 +35,11 @@ export function CompressPdf({ onBack, isProUser, onRequirePro }: { onBack: () =>
       })
       return
     }
-    if (!isProUser && newFile.size > 10 * 1024 * 1024) {
+    const maxMb = userTier === "pro" ? Infinity : userTier === "medium" ? 50 : 10
+    if (newFile.size > maxMb * 1024 * 1024) {
       toast({
-        title: "⚠️ Free Limit: 10 MB Max per File",
-        description: `"${newFile.name}" is ${(newFile.size / (1024 * 1024)).toFixed(1)} MB. Upgrade to GhostPDF Pro for Unlimited File Sizes! 👑`,
+        title: `⚠️ ${userTier === "medium" ? "Medium Plan" : "Free Tier"} Limit: ${maxMb} MB Max`,
+        description: `"${newFile.name}" is ${(newFile.size / (1024 * 1024)).toFixed(1)} MB. Upgrade to Pro for Unlimited File Sizes! 👑`,
         variant: "destructive"
       })
       if (onRequirePro) onRequirePro()
