@@ -1,8 +1,9 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
-// @ts-ignore
-import Razorpay from 'razorpay'
 import crypto from 'crypto'
+import { createRequire } from 'module'
+
+const require = createRequire(import.meta.url)
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -36,6 +37,7 @@ export default defineConfig(({ mode }) => {
                     res.statusCode = 400
                     return res.end(JSON.stringify({ error: 'Amount must be at least 100 paise' }))
                   }
+                  const Razorpay = require('razorpay')
                   const instance = new Razorpay({ key_id, key_secret })
                   const order = await instance.orders.create({
                     amount: amountNum,
