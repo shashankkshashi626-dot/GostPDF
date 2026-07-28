@@ -1109,11 +1109,12 @@ function DashboardContent() {
             {/* Test Mode Credentials Notice */}
             <div className="mb-4 p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-left space-y-1.5">
               <p className="text-[11px] font-bold text-blue-700 dark:text-blue-300">
-                🧪 Razorpay Test Mode Sandbox Credentials:
+                🧪 Razorpay Test Mode Options (Select Netbanking or Domestic Card):
               </p>
               <div className="text-[10px] text-zinc-700 dark:text-zinc-300 space-y-1 font-mono bg-blue-50/50 dark:bg-zinc-900/60 p-2 rounded-lg border border-blue-500/10">
-                <div>💳 <strong>Test Card:</strong> 4111 1111 1111 1111 &bull; CVV: 123 &bull; Exp: 12/26</div>
-                <div>📱 <strong>Test UPI:</strong> test@razorpay</div>
+                <div>🏦 <strong>Netbanking (Fastest):</strong> Select <strong>SBI / HDFC</strong> &rarr; Click <strong>Success</strong></div>
+                <div>💳 <strong>Domestic Card:</strong> 4012 0000 0000 0002 &bull; CVV: 123 &bull; Exp: 12/30</div>
+                <div>📱 <strong>Test UPI VPA:</strong> success@razorpay</div>
               </div>
             </div>
 
