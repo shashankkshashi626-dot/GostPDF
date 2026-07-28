@@ -1,6 +1,6 @@
 import * as React from "react"
 import {
-  Search, Moon, Sun, Info, X, Menu,
+  Search, Moon, Sun, Info, X, Menu, Camera,
   Settings, Star, Clock, Home,
   Files, Split, Layers, Maximize2, Unlock,
   Shield, Crop, PenTool, FileDigit, Stamp,
@@ -36,6 +36,7 @@ const ToolIcon = ({ iconName, className }: { iconName: string, className?: strin
     case "bookopen": return <BookOpen {...props} />;
     case "refreshcw": return <RefreshCw {...props} />;
     case "image": return <Image {...props} />;
+    case "camera": return <Camera {...props} />;
     case "arrowleftright": return <ArrowLeftRight {...props} />;
     case "clock": return <ClockIcon {...props} />;
     default: return <Files {...props} />;
@@ -60,6 +61,7 @@ import { AddPageNumbers } from "./tools/AddPageNumbers"
 import { FlattenPdf } from "./tools/FlattenPdf"
 import { ImageToPdf } from "./tools/ImageToPdf"
 import { PlaceholderWorkspace } from "./tools/PlaceholderWorkspace"
+import { CameraScanner } from "./tools/CameraScanner"
 
 // Interface for all tools
 interface ToolItem {
@@ -310,6 +312,7 @@ function DashboardContent() {
     { id: "watermark", name: "Add Watermark", desc: "💧", icon: "stamp", emoji: "💧", color: "text-blue-400", isActive: true },
     { id: "ocr", name: "OCR", desc: "(Local with Tesseract.js) 👀", icon: "scantext", emoji: "👀", color: "text-rose-500", isActive: true },
     { id: "compress", name: "Compress PDF", desc: "(Canvas Render, Quality Slider) ✨", icon: "filedown", emoji: "✨", color: "text-purple-500", isActive: true },
+    { id: "camscanner", name: "Camera Scanner", desc: "(Mobile Live Camera & Gallery to PDF) 📷", icon: "camera", emoji: "📷", color: "text-purple-500", isActive: true },
     { id: "img2pdf", name: "Image to PDF", desc: "(JPG/PNG Local) 🖼️", icon: "fileimage", emoji: "🖼️", color: "text-emerald-400", isActive: true },
     { id: "pdf2png", name: "PDF to PNG", desc: "(Local) 🖼️", icon: "fileimage", emoji: "🖼️", color: "text-rose-400", isActive: true },
     { id: "pdf2word", name: "PDF to Word", desc: "(DOCX difficult, with warning) ⚠️", icon: "filetext", emoji: "⚠️", color: "text-red-400", isActive: true },
@@ -408,6 +411,9 @@ function DashboardContent() {
     }
     if (activeTool === "img2pdf") {
       return <ImageToPdf {...toolProps} />
+    }
+    if (activeTool === "camscanner") {
+      return <CameraScanner onBack={() => setActiveTool(null)} userTier={userTier} />
     }
 
     if (activeTool) {
@@ -986,6 +992,7 @@ function DashboardContent() {
                 {expandedMenus["image-tools"] && (
                   <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
                     {[
+                      { id: "camscanner", label: "Camera Scanner 📷", color: "text-purple-500" },
                       { id: "img2pdf", label: "Image to PDF 🖼️", color: "text-emerald-400" },
                       { id: "pdf2png", label: "PDF to PNG 🖼️", color: "text-rose-400" },
                       { id: "pdf2jpg", label: "PDF to JPG 📸", color: "text-pink-500" },
