@@ -636,14 +636,8 @@ function DashboardContent() {
             </div>
           </div>
 
-          {/* Collapsible Accordion Navigation — with blur-fade scroll edges */}
-          <div className="relative">
-            {/* Top fade */}
-            <div className="pointer-events-none absolute top-0 left-0 right-0 h-6 z-10 bg-gradient-to-b from-white/80 dark:from-zinc-950/80 to-transparent" />
-            {/* Bottom fade */}
-            <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 z-10 bg-gradient-to-t from-white/90 dark:from-zinc-950/90 to-transparent" />
-
-            <nav className="flex flex-col gap-1 overflow-y-auto max-h-[420px] pr-1 py-2" style={{ scrollbarWidth: "none" }}>
+          {/* Sidebar Navigation */}
+          <nav className="flex flex-col gap-1 py-1">
               {/* Home */}
               <button
                 onClick={() => { setActiveTool(null); setActiveMenu("all-tools"); }}
@@ -916,7 +910,6 @@ function DashboardContent() {
                 </button>
               </div>
             </nav>
-          </div>
         </div>
 
         {/* Upgrade Pro Widget */}
