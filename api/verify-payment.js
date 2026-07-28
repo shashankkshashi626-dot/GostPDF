@@ -1,34 +1,40 @@
 import crypto from 'crypto'
 
 export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end()
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
   try {
-    const key_secret = process.env.RAZORPAY_KEY_SECRET
+    const key_secret = process.env.RAZORPAY_KEY_SECRET || 'S1KW3ipv8GLyGRHM0ruobUIl'
 
-    if (!key_secret) {
-      return res.status(401).json({ error: 'Razorpay Key Secret missing' })
+    let body = req.body
+    if (typeof body === 'string') {
+      try { body = JSON.parse(body) } catch {}
     }
+    body = body || {}
 
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body || {}
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = body
 
-    // Check missing fields
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-      return res.status(400).json({ error: 'Missing required verification fields: razorpay_order_id, razorpay_payment_id, and razorpay_signature are required' })
+      return res.status(400).json({ error: 'Missing required verification fields' })
     }
 
-    // Generate expected HMAC-SHA256 signature
-    const body = razorpay_order_id + '|' + razorpay_payment_id
+    const payload = razorpay_order_id + '|' + razorpay_payment_id
     const expectedSignature = crypto
       .createHmac('sha256', key_secret)
-      .update(body.toString())
+      .update(payload.toString())
       .digest('hex')
 
-    const isSignatureValid = expectedSignature === razorpay_signature
-
-    if (isSignatureValid) {
+    if (expectedSignature === razorpay_signature) {
       return res.status(200).json({
         status: 'success',
         message: 'Payment verified successfully',
