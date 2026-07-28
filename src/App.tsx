@@ -109,6 +109,20 @@ function DashboardContent() {
     setShowUpgradeModal(false)
   }
 
+  // Cancel Subscription / Downgrade Handler
+  const handleCancelSubscription = () => {
+    setUserTier("free")
+    try {
+      localStorage.removeItem("ghostpdf_pro")
+      localStorage.setItem("ghostpdf_tier", "free")
+    } catch {}
+    toast({
+      title: "Subscription Cancelled ❌",
+      description: "Your membership has been reverted to the Free Tier (10 MB per file limit).",
+      variant: "destructive"
+    })
+  }
+
   // Razorpay Multi-Tier Checkout Handler (12 Months Access)
   const handleRazorpayPayment = async (tier: "medium" | "pro" = "pro") => {
     if (!navigator.onLine) {
@@ -550,6 +564,136 @@ function DashboardContent() {
       )
     }
 
+    // ── Settings & Membership Dashboard ───────────────────────────
+    if (activeMenu === "settings") {
+      return (
+        <div className="flex-1 py-8 px-6 md:px-12 max-w-5xl mx-auto w-full animate-in fade-in duration-300 space-y-6">
+          {/* Settings Header */}
+          <div className="flex items-center gap-4 pb-6 border-b border-zinc-200 dark:border-zinc-800">
+            <div className="h-12 w-12 rounded-2xl bg-zinc-200/60 dark:bg-zinc-800/60 flex items-center justify-center shrink-0">
+              <Settings className="h-6 w-6 text-zinc-700 dark:text-zinc-300" />
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-extrabold text-zinc-900 dark:text-zinc-50 tracking-tight">System Settings</h1>
+              <p className="text-xs md:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">Manage subscription cancellation, About Us, Help Guide, and appearance</p>
+            </div>
+          </div>
+
+          {/* 1. Membership & Subscription Settings (with Cancel Option) */}
+          <div className="p-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm space-y-4">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className="h-11 w-11 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 text-xl shrink-0">
+                  👑
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-zinc-900 dark:text-zinc-50">Membership &amp; Subscription</h3>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                    Current Active Tier: <span className="font-extrabold text-amber-500 uppercase">{userTier}</span>
+                  </p>
+                </div>
+              </div>
+
+              {userTier !== "free" ? (
+                <button
+                  onClick={handleCancelSubscription}
+                  className="px-4 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/20 font-bold text-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                >
+                  <span>Cancel Subscription / Downgrade to Free ❌</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => setShowUpgradeModal(true)}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-xs transition-all shadow-md shadow-amber-500/20 cursor-pointer flex items-center gap-1.5"
+                >
+                  <span>Upgrade Plan 👑</span>
+                </button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
+              <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">File Size Limit</span>
+                <p className="font-black text-zinc-900 dark:text-zinc-50 text-sm mt-1">
+                  {userTier === "pro" ? "Unlimited MB" : userTier === "medium" ? "50 MB per file" : "10 MB per file"}
+                </p>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">Batch Processing</span>
+                <p className="font-black text-zinc-900 dark:text-zinc-50 text-sm mt-1">
+                  {userTier === "pro" ? "Unlimited Files" : userTier === "medium" ? "10 Files batch" : "3 Files batch"}
+                </p>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">Duration</span>
+                <p className="font-black text-zinc-900 dark:text-zinc-50 text-sm mt-1">
+                  {userTier === "free" ? "Lifetime Free" : "12 Months Access"}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. About Us */}
+          <div className="p-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0">
+                <Info className="h-5 w-5" />
+              </div>
+              <h3 className="text-base font-extrabold text-zinc-900 dark:text-zinc-50">About GhostPDF Engine</h3>
+            </div>
+            <p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              GhostPDF is engineered with W3C WebCrypto and WebAssembly to execute 100% of document processing inside your device's browser memory (RAM). Confidential documents never leave your system, guaranteeing complete privacy and zero server leaks.
+            </p>
+          </div>
+
+          {/* 3. Help Center & FAQ */}
+          <div className="p-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 shrink-0">
+                <HelpCircle className="h-5 w-5" />
+              </div>
+              <h3 className="text-base font-extrabold text-zinc-900 dark:text-zinc-50">Help &amp; Support Guide</h3>
+            </div>
+            <div className="space-y-3">
+              <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+                <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100">🌐 Is Internet required for GhostPDF?</h4>
+                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed">
+                  An active internet connection is needed only once during Razorpay checkout. Once activated, GhostPDF Pro runs 100% offline without internet.
+                </p>
+              </div>
+              <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+                <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100">🔒 How do I cancel my subscription?</h4>
+                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed">
+                  You can click the <strong>Cancel Subscription</strong> button above at any time to immediately revert your plan to the Free Tier.
+                </p>
+              </div>
+              <div className="p-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
+                <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100">✉️ Need help or support?</h4>
+                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed">
+                  Contact our support team anytime at <a href="mailto:support@ghostpdf.com" className="text-amber-500 font-bold underline">support@ghostpdf.com</a>.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 4. Appearance Settings */}
+          <div className="p-6 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <h3 className="text-sm font-extrabold text-zinc-900 dark:text-zinc-50">Interface Theme</h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Switch between Dark Mode and Light Mode</p>
+            </div>
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="px-4 py-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-bold text-xs border border-zinc-200 dark:border-zinc-800 cursor-pointer flex items-center gap-2 transition-colors"
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-indigo-500" />}
+              <span>{theme === "dark" ? "Light Theme" : "Dark Theme"}</span>
+            </button>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div className="flex-1 py-8 px-6 md:px-12 max-w-7xl mx-auto w-full animate-in fade-in duration-300">
         {/* Top Header */}
@@ -928,17 +1072,20 @@ function DashboardContent() {
               {/* Bottom Actions */}
               <div className="flex flex-col gap-1 border-t border-zinc-200 dark:border-zinc-900 pt-3 mt-2">
                 <button
-                  onClick={() => toast({ title: "Settings", description: "Configure system themes and visual styles." })}
-                  className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+                  onClick={() => { setActiveMenu("settings"); setActiveTool(null); }}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold cursor-pointer transition-all ${activeMenu === "settings"
+                    ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50 border border-zinc-300 dark:border-zinc-800"
+                    : "text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 border border-transparent"
+                    }`}
                 >
-                  <Settings className="h-4 w-4" />
+                  <Settings className="h-4 w-4 text-amber-500" />
                   Settings
                 </button>
                 <button
-                  onClick={() => toast({ title: "Help Center", description: "Visit our help center for assistance." })}
+                  onClick={() => { setActiveMenu("settings"); setActiveTool(null); }}
                   className="flex items-center gap-3 px-3 py-2 text-zinc-500 hover:bg-zinc-200/30 dark:hover:bg-zinc-900/50 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
                 >
-                  <HelpCircle className="h-4 w-4" />
+                  <HelpCircle className="h-4 w-4 text-emerald-500" />
                   Help Center
                 </button>
                 <button
@@ -1180,13 +1327,19 @@ function DashboardContent() {
               </button>
             </div>
 
-            {/* 1-Click Test Mode Instant Activation */}
-            <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-800 text-center">
+            {/* Modal Bottom Actions (Cancel & Instant Activate) */}
+            <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between gap-2">
+              <button
+                onClick={() => setShowUpgradeModal(false)}
+                className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-colors cursor-pointer"
+              >
+                Cancel / Close ✖
+              </button>
               <button
                 onClick={() => activateTier("pro", "demo_instant_pro")}
                 className="text-[11px] font-bold text-amber-500 hover:text-amber-600 underline cursor-pointer"
               >
-                ⚡ 1-Click Instant Activate Pro (Bypass Test Checkout)
+                ⚡ 1-Click Instant Activate Pro
               </button>
             </div>
           </div>
