@@ -684,10 +684,10 @@ function DashboardContent() {
   }
 
   return (
-    <div className="flex min-h-screen w-full bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 transition-colors">
+    <div className="flex h-screen w-full overflow-hidden bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 transition-colors">
 
-      {/* Sidebar Layout */}
-      <aside className="w-[260px] border-r border-white/10 dark:border-zinc-800/60 bg-white/60 dark:bg-zinc-950/70 backdrop-blur-xl shrink-0 hidden md:flex flex-col justify-between p-5 select-none shadow-[1px_0_24px_0_rgba(0,0,0,0.06)] dark:shadow-[1px_0_24px_0_rgba(0,0,0,0.3)]">
+      {/* Sidebar Layout — 100% Fixed & Stable */}
+      <aside className="w-[260px] h-full border-r border-white/10 dark:border-zinc-800/60 bg-white/60 dark:bg-zinc-950/70 backdrop-blur-xl shrink-0 hidden md:flex flex-col justify-between p-5 select-none shadow-[1px_0_24px_0_rgba(0,0,0,0.06)] dark:shadow-[1px_0_24px_0_rgba(0,0,0,0.3)] overflow-y-auto">
         <div className="flex flex-col gap-6">
 
           {/* Logo */}
@@ -995,7 +995,7 @@ function DashboardContent() {
       </aside>
 
       {/* Main Workspace Frame */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
 
         {/* Top Navbar */}
         <header className="h-14 border-b border-zinc-200 dark:border-zinc-900 px-6 flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-950/50 backdrop-blur shrink-0 select-none">
