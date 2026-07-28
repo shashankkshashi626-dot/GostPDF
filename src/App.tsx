@@ -1099,10 +1099,19 @@ function DashboardContent() {
             </div>
 
             {/* Internet Requirement Notice */}
-            <div className="mb-5 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-2.5">
+            <div className="mb-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-2.5">
               <span className="text-base shrink-0">🌐</span>
               <p className="text-[11px] text-amber-700 dark:text-amber-300 leading-snug">
                 <strong>Internet Required Only Once for Upgrade:</strong> An active internet connection is needed to complete the Razorpay checkout. Once activated, <strong>GhostPDF Pro runs 100% offline with zero file size limits!</strong>
+              </p>
+            </div>
+
+            {/* Test Mode UPI Notice */}
+            <div className="mb-4 p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-left">
+              <p className="text-[11px] text-blue-700 dark:text-blue-300 leading-snug">
+                ⚠️ <strong>Razorpay Test Mode (`rzp_test`):</strong> Real UPI apps (PhonePe/GPay) cannot scan test sandbox QRs.
+                <br />
+                👉 <strong>To complete test checkout:</strong> Select <strong>Netbanking (Success)</strong>, <strong>Card (`4111 1111 1111 1111`)</strong>, or click <strong>Success</strong> in the popup!
               </p>
             </div>
 
