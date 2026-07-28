@@ -6,8 +6,7 @@ import {
   Shield, Crop, PenTool, FileDigit, Stamp,
   ScanText, FileDown, FileImage, FileText,
   BookOpen, RefreshCw, ArrowLeftRight, Clock as ClockIcon,
-  Image, Folder, Bot, Wrench, ChevronDown, ChevronRight, HelpCircle, Cloud, Sparkles,
-  LayoutGrid, SlidersHorizontal
+  Image, Folder, Bot, Wrench, ChevronDown, ChevronRight, HelpCircle, Cloud, Sparkles
 } from "lucide-react"
 
 const ToolIcon = ({ iconName, className }: { iconName: string, className?: string }) => {
@@ -73,88 +72,7 @@ function DashboardContent() {
   const [activeTool, setActiveTool] = React.useState<string | null>(null)
   const [searchQuery, setSearchQuery] = React.useState("")
   const [activeMenu, setActiveMenu] = React.useState("all-tools")
-  const [viewMode, setViewMode] = React.useState<"vertical" | "horizontal">("horizontal")
   const searchInputRef = React.useRef<HTMLInputElement>(null)
-
-  // Tools Horizontal Slider ref & scroll states
-  const sliderRef = React.useRef<HTMLDivElement>(null)
-  const [canScrollLeft, setCanScrollLeft] = React.useState(false)
-  const [canScrollRight, setCanScrollRight] = React.useState(true)
-  const [scrollProgress, setScrollProgress] = React.useState(0)
-
-  // Drag-to-scroll tracking
-  const [isMouseDown, setIsMouseDown] = React.useState(false)
-  const [startX, setStartX] = React.useState(0)
-  const [scrollLeftPos, setScrollLeftPos] = React.useState(0)
-  const [dragged, setDragged] = React.useState(false)
-
-  const updateScrollState = React.useCallback(() => {
-    const el = sliderRef.current
-    if (!el) return
-    setCanScrollLeft(el.scrollLeft > 5)
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 5)
-    const maxScroll = el.scrollWidth - el.clientWidth
-    if (maxScroll > 0) {
-      setScrollProgress((el.scrollLeft / maxScroll) * 100)
-    }
-  }, [])
-
-  // Mouse wheel & resize horizontal scroll handler
-  React.useEffect(() => {
-    const el = sliderRef.current
-    if (!el) return
-
-    const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY !== 0) {
-        e.preventDefault()
-        el.scrollBy({ left: e.deltaY * 1.5, behavior: "smooth" })
-      }
-    }
-
-    el.addEventListener("wheel", handleWheel, { passive: false })
-    el.addEventListener("scroll", updateScrollState)
-    window.addEventListener("resize", updateScrollState)
-
-    updateScrollState()
-
-    return () => {
-      el.removeEventListener("wheel", handleWheel)
-      el.removeEventListener("scroll", updateScrollState)
-      window.removeEventListener("resize", updateScrollState)
-    }
-  }, [updateScrollState])
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    const el = sliderRef.current
-    if (!el) return
-    setIsMouseDown(true)
-    setDragged(false)
-    setStartX(e.pageX - el.offsetLeft)
-    setScrollLeftPos(el.scrollLeft)
-  }
-
-  const handleMouseLeave = () => setIsMouseDown(false)
-  const handleMouseUp = () => setIsMouseDown(false)
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isMouseDown || !sliderRef.current) return
-    e.preventDefault()
-    const el = sliderRef.current
-    const x = e.pageX - el.offsetLeft
-    const walk = (x - startX) * 1.5
-    if (Math.abs(walk) > 5) {
-      setDragged(true)
-    }
-    el.scrollLeft = scrollLeftPos - walk
-  }
-
-  const scrollSliderLeft = () => {
-    sliderRef.current?.scrollBy({ left: -360, behavior: "smooth" })
-  }
-
-  const scrollSliderRight = () => {
-    sliderRef.current?.scrollBy({ left: 360, behavior: "smooth" })
-  }
 
   // Favourites — stored in localStorage
   const [favoritedTools, setFavoritedTools] = React.useState<string[]>(() => {
@@ -517,60 +435,9 @@ function DashboardContent() {
               </span>
             </div>
             <div className="flex items-center gap-3">
-              {/* View mode toggle: Vertical Grid vs Horizontal Slider */}
-              <div className="flex items-center bg-zinc-200/60 dark:bg-zinc-900 p-1 rounded-lg border border-zinc-300 dark:border-zinc-800 gap-1">
-                <button
-                  onClick={() => setViewMode("vertical")}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${viewMode === "vertical"
-                      ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 shadow-sm"
-                      : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300"
-                    }`}
-                  title="Vertical scroll grid"
-                >
-                  <LayoutGrid className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Vertical</span>
-                </button>
-                <button
-                  onClick={() => setViewMode("horizontal")}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${viewMode === "horizontal"
-                      ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-50 shadow-sm"
-                      : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300"
-                    }`}
-                  title="Horizontal slider"
-                >
-                  <SlidersHorizontal className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Horizontal</span>
-                </button>
-              </div>
-
-              {viewMode === "horizontal" && (
-                <div className="flex items-center gap-1.5">
-                  <button
-                    id="slide-left"
-                    onClick={scrollSliderLeft}
-                    disabled={!canScrollLeft}
-                    className={`h-8 w-8 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-500 transition-all ${canScrollLeft
-                        ? "hover:bg-zinc-100 dark:hover:bg-zinc-900 cursor-pointer text-zinc-800 dark:text-zinc-200"
-                        : "opacity-40 cursor-not-allowed"
-                      }`}
-                    title="Scroll left"
-                  >
-                    <ChevronRight className="h-4 w-4 rotate-180" />
-                  </button>
-                  <button
-                    id="slide-right"
-                    onClick={scrollSliderRight}
-                    disabled={!canScrollRight}
-                    className={`h-8 w-8 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-500 transition-all ${canScrollRight
-                        ? "hover:bg-zinc-100 dark:hover:bg-zinc-900 cursor-pointer text-zinc-800 dark:text-zinc-200"
-                        : "opacity-40 cursor-not-allowed"
-                      }`}
-                    title="Scroll right"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
-              )}
+              <span className="text-xs bg-zinc-200 dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-800 px-2.5 py-1 rounded-full font-semibold text-zinc-500 dark:text-zinc-400">
+                Scroll to view all
+              </span>
             </div>
           </div>
 
@@ -588,9 +455,9 @@ function DashboardContent() {
                 Clear search
               </button>
             </div>
-          ) : viewMode === "vertical" ? (
-            /* Vertical Scroll Grid Layout */
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 max-h-[640px] overflow-y-auto pr-2 pb-2 scroll-smooth">
+          ) : (
+            /* Dedicated Vertical Scroll Grid Layout */
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 max-h-[500px] overflow-y-auto pr-2 pb-2 scroll-smooth">
               {filteredTools.map((t) => (
                 <div
                   key={t.id}
@@ -638,94 +505,6 @@ function DashboardContent() {
                   )}
                 </div>
               ))}
-            </div>
-          ) : (
-            /* Horizontal Slider Layout */
-            <div className="relative group/slider">
-              {/* Left blur edge */}
-              <div className={`pointer-events-none absolute left-0 top-0 bottom-0 w-12 z-10 bg-gradient-to-r from-zinc-50 dark:from-zinc-950 to-transparent transition-opacity duration-300 ${canScrollLeft ? "opacity-100" : "opacity-0"
-                }`} />
-              {/* Right blur edge */}
-              <div className={`pointer-events-none absolute right-0 top-0 bottom-0 w-12 z-10 bg-gradient-to-l from-zinc-50 dark:from-zinc-950 to-transparent transition-opacity duration-300 ${canScrollRight ? "opacity-100" : "opacity-0"
-                }`} />
-
-              {/* Scrollable row */}
-              <div
-                id="tools-slider"
-                ref={sliderRef}
-                onMouseDown={handleMouseDown}
-                onMouseLeave={handleMouseLeave}
-                onMouseUp={handleMouseUp}
-                onMouseMove={handleMouseMove}
-                className={`flex gap-3 overflow-x-auto scroll-smooth pb-4 pt-1 px-2 select-none ${isMouseDown ? "cursor-grabbing" : "cursor-grab"
-                  }`}
-                style={{
-                  scrollbarWidth: "thin",
-                  scrollbarColor: theme === "dark" ? "#27272a transparent" : "#d4d4d8 transparent"
-                }}
-              >
-                {filteredTools.map((t) => (
-                  <div
-                    key={t.id}
-                    onClick={() => {
-                      if (dragged) return
-                      if (t.isActive) {
-                        openTool(t.id, t.name)
-                      } else {
-                        triggerPlaceholderToast(t.name)
-                      }
-                    }}
-                    className={`group relative flex flex-col p-5 rounded-xl border transition-all duration-200 text-left shrink-0 w-44 ${t.isActive
-                      ? "border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/40 bg-zinc-50 dark:bg-zinc-900/40 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/45 cursor-pointer shadow-sm hover:shadow-md hover:-translate-y-0.5"
-                      : "border-zinc-200/50 dark:border-zinc-800/30 bg-zinc-100/20 dark:bg-zinc-900/10 cursor-not-allowed opacity-60"
-                      }`}
-                  >
-                    <div className="flex justify-between items-start mb-4">
-                      <span className="shrink-0 p-2 rounded-lg bg-zinc-200/50 dark:bg-zinc-800/60 group-hover:scale-110 transition-transform inline-flex">
-                        <ToolIcon iconName={t.icon} className={`h-6 w-6 ${t.color}`} />
-                      </span>
-                      <div className="flex items-center gap-1">
-                        {t.isActive && (
-                          <button
-                            onClick={e => toggleFavorite(e, t.id)}
-                            className="h-6 w-6 flex items-center justify-center rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/20 transition-colors cursor-pointer"
-                            title={favoritedTools.includes(t.id) ? "Remove from favorites" : "Add to favorites"}
-                          >
-                            <Star className={`h-3.5 w-3.5 transition-colors ${favoritedTools.includes(t.id) ? "text-amber-500 fill-amber-500" : "text-zinc-300 dark:text-zinc-600 group-hover:text-amber-400"
-                              }`} />
-                          </button>
-                        )}
-                        {!t.isActive && (
-                          <span className="text-[9px] font-bold tracking-wider text-zinc-400 dark:text-zinc-500 bg-zinc-200/40 dark:bg-zinc-800/30 px-1.5 py-0.5 rounded uppercase">Soon</span>
-                        )}
-                      </div>
-                    </div>
-
-                    <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 leading-snug">
-                      {t.name}
-                    </h3>
-                    <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-1 line-clamp-2 leading-relaxed">
-                      {t.desc}
-                    </p>
-                    {t.isActive && (
-                      <span className="mt-3 self-start text-[9px] font-bold tracking-wider text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded uppercase border border-emerald-500/10">Offline</span>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Horizontal Scroll Track & Indicator */}
-              <div className="mt-3 px-2 flex items-center gap-3">
-                <div className="flex-1 bg-zinc-200 dark:bg-zinc-800/80 h-1.5 rounded-full overflow-hidden">
-                  <div
-                    className="bg-emerald-500 h-full transition-all duration-150 rounded-full"
-                    style={{ width: `${Math.max(15, Math.min(100, scrollProgress))}%` }}
-                  />
-                </div>
-                <span className="text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 shrink-0 select-none">
-                  Scroll for more →
-                </span>
-              </div>
             </div>
           )}
         </div>
