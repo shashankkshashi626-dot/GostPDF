@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
+// @ts-ignore
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
 
