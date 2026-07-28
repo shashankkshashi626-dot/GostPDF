@@ -6,7 +6,7 @@ import {
   Shield, Crop, PenTool, FileDigit, Stamp,
   ScanText, FileDown, FileImage, FileText,
   BookOpen, RefreshCw, ArrowLeftRight, Clock as ClockIcon,
-  Image, Folder, Bot, Wrench, ChevronDown, ChevronRight, HelpCircle, Cloud, Sparkles,
+  Image, Folder, Wrench, ChevronDown, ChevronRight, HelpCircle, Cloud,
   ShieldCheck, CheckCircle2, Lock
 } from "lucide-react"
 
@@ -84,6 +84,14 @@ function DashboardContent() {
 
   // Razorpay Pro Checkout Handler
   const handleRazorpayPayment = () => {
+    if (!navigator.onLine) {
+      toast({
+        title: "🌐 Internet Connection Required to Upgrade",
+        description: "An active internet connection is needed once during Razorpay checkout. Once upgraded, GhostPDF Pro works 100% offline without limits!",
+        variant: "destructive"
+      })
+      return
+    }
     const script = document.createElement("script")
     script.src = "https://checkout.razorpay.com/v1/checkout.js"
     script.onload = () => {
@@ -481,34 +489,44 @@ function DashboardContent() {
           </div>
 
           {/* Key Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 hover:border-cyan-500/40 transition-colors">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+            <div className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 hover:border-cyan-500/40 transition-colors">
               <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4">
                 <Shield className="h-5 w-5 text-emerald-500" />
               </div>
-              <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50 mb-2">100% Local &amp; Private</h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 mb-2">100% Local &amp; Private</h3>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
                 Zero file uploads, zero server processing, and zero data tracking. Your documents remain strictly on your machine.
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 hover:border-cyan-500/40 transition-colors">
+            <div className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 hover:border-cyan-500/40 transition-colors">
               <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center mb-4">
                 <ClockIcon className="h-5 w-5 text-amber-500" />
               </div>
-              <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50 mb-2">Works Fully Offline</h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 mb-2">Works Fully Offline</h3>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
                 Once loaded, GhostPDF requires no active internet connection. Work seamlessly on airplanes, remote areas, or offline setups.
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 hover:border-cyan-500/40 transition-colors">
+            <div className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 hover:border-cyan-500/40 transition-colors">
               <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4">
                 <Wrench className="h-5 w-5 text-purple-500" />
               </div>
-              <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-50 mb-2">24+ Powerful Tools</h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                Merge, Split, Flatten, Resize, Compress, Unlock, Protect, OCR, Sign, Page Numbers, Watermarks, Image Converters &amp; QR Code Generator.
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 mb-2">24+ Powerful Tools</h3>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Merge, Split, Flatten, Resize, Compress, Unlock, Protect, OCR, Sign, Page Numbers, Watermarks &amp; QR Generator.
+              </p>
+            </div>
+
+            <div className="p-5 rounded-2xl border border-amber-500/30 bg-amber-500/5 dark:bg-amber-950/10 hover:border-amber-500/50 transition-colors">
+              <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center mb-4 text-xl">
+                👑
+              </div>
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-50 mb-2">Pro (Unlimited &amp; Offline)</h3>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Process unlimited files with zero caps. Internet is needed <strong>only once during Razorpay checkout</strong> — all Pro tools run 100% offline afterwards!
               </p>
             </div>
           </div>
@@ -752,41 +770,6 @@ function DashboardContent() {
                 )}
               </div>
 
-              {/* AI Studio */}
-              <div>
-                <button
-                  onClick={() => toggleMenu("ai-studio")}
-                  className="flex items-center justify-between w-full px-3 py-2 text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-800 dark:hover:text-zinc-300 rounded-lg text-sm font-semibold cursor-pointer transition-all"
-                >
-                  <div className="flex items-center gap-3">
-                    <Bot className="h-4 w-4 text-purple-500" />
-                    <span>AI Studio</span>
-                  </div>
-                  {expandedMenus["ai-studio"] ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-                </button>
-                {expandedMenus["ai-studio"] && (
-                  <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
-                    {[
-                      { id: "ocr", label: "OCR Text Recognition 👀", color: "text-rose-500" },
-                      { id: "watermark", label: "Smart Watermark 💧", color: "text-blue-400" },
-                      { id: "compress", label: "AI Compress ✨", color: "text-purple-500" },
-                    ].map(item => (
-                      <button
-                        key={item.id}
-                        onClick={() => setActiveTool(item.id)}
-                        className={`flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all w-full text-left cursor-pointer ${activeTool === item.id
-                          ? "bg-zinc-200/50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-50"
-                          : "text-zinc-500 hover:bg-white/40 dark:hover:bg-zinc-900/60 hover:text-zinc-900 dark:hover:text-zinc-300"
-                          }`}
-                      >
-                        <Sparkles className={`h-3 w-3 ${item.color}`} />
-                        <span className="truncate">{item.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
               {/* Image Tools */}
               <div>
                 <button
@@ -982,7 +965,7 @@ function DashboardContent() {
             Upgrade to GhostPDF Pro 👑
           </span>
           <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-1 leading-normal">
-            Unlock all premium tools, AI features &amp; supporter perks.
+            Unlock all premium tools, batch processing &amp; supporter perks.
           </p>
           <Button
             onClick={() => setShowUpgradeModal(true)}
@@ -1033,16 +1016,6 @@ function DashboardContent() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => toast({ title: "AI Assistant", description: "AI PDF Copilot is scheduled for release in Q3." })}
-              className="h-8 text-xs font-bold flex gap-1.5 items-center cursor-pointer border-purple-500/30 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/20"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              AI Assistant
-            </Button>
-
-            <Button
-              variant="outline"
-              size="sm"
               onClick={() => { setActiveMenu("about"); setActiveTool(null); }}
               className="h-8 text-xs font-bold flex gap-1.5 items-center cursor-pointer dark:hover:bg-zinc-900"
             >
@@ -1085,7 +1058,7 @@ function DashboardContent() {
               </div>
               <h2 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight">GhostPDF Pro Upgrade</h2>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-                Unlock Unlimited Speed, Advanced AI Features &amp; Supporter Perks
+                Unlock Unlimited Speed, Batch Processing &amp; Supporter Perks
               </p>
             </div>
 
@@ -1094,7 +1067,7 @@ function DashboardContent() {
               {[
                 { title: "100% Unlimited Local Processing", desc: "No file size limits or hourly caps" },
                 { title: "All 24+ PDF & Image Tools", desc: "Full access to Merge, Split, Compress, OCR, Sign & QR" },
-                { title: "Offline AI Studio", desc: "Tesseract.js local OCR & smart watermark detection" },
+                { title: "Offline OCR & Local Utilities", desc: "Tesseract.js local OCR & smart watermark detection" },
                 { title: "Zero Ads & Zero Data Tracking", desc: "Your documents strictly stay on your local disk" },
               ].map((feat, i) => (
                 <div key={i} className="flex items-start gap-3">
@@ -1107,6 +1080,14 @@ function DashboardContent() {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Internet Requirement Notice */}
+            <div className="mb-5 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-2.5">
+              <span className="text-base shrink-0">🌐</span>
+              <p className="text-[11px] text-amber-700 dark:text-amber-300 leading-snug">
+                <strong>Internet Required Only Once for Upgrade:</strong> An active internet connection is needed to complete the Razorpay checkout. Once activated, <strong>GhostPDF Pro runs 100% offline with zero file size limits!</strong>
+              </p>
             </div>
 
             {/* Pricing Cards */}
