@@ -11,7 +11,7 @@ interface MergeFile {
   size: string
 }
 
-export function MergePdf({ onBack }: { onBack: () => void }) {
+export function MergePdf({ onBack, isProUser, onRequirePro }: { onBack: () => void; isProUser?: boolean; onRequirePro?: () => void }) {
   const [files, setFiles] = React.useState<MergeFile[]>([])
   const [isMerging, setIsMerging] = React.useState(false)
   const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null)
@@ -34,6 +34,28 @@ export function MergePdf({ onBack }: { onBack: () => void }) {
     for (let i = 0; i < newFiles.length; i++) {
       const file = newFiles[i]
       if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
+        // Enforce 10MB size limit for Free users
+        if (!isProUser && file.size > 10 * 1024 * 1024) {
+          toast({
+            title: "⚠️ Free Limit: 10 MB Max per File",
+            description: `"${file.name}" is ${(file.size / (1024 * 1024)).toFixed(1)} MB. Upgrade to GhostPDF Pro for Unlimited File Sizes! 👑`,
+            variant: "destructive"
+          })
+          if (onRequirePro) onRequirePro()
+          continue
+        }
+
+        // Enforce 3 files max for Free users
+        if (!isProUser && files.length + pdfs.length >= 3) {
+          toast({
+            title: "⚠️ Free Limit: 3 Files Max Batch",
+            description: "Free version allows max 3 files. Upgrade to GhostPDF Pro for Unlimited Batching! 👑",
+            variant: "destructive"
+          })
+          if (onRequirePro) onRequirePro()
+          break
+        }
+
         pdfs.push({
           id: Math.random().toString(36).substring(2, 9),
           file,

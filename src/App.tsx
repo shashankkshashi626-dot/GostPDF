@@ -81,6 +81,20 @@ function DashboardContent() {
   const [activeMenu, setActiveMenu] = React.useState("all-tools")
   const [showUpgradeModal, setShowUpgradeModal] = React.useState(false)
   const [showSecurityModal, setShowSecurityModal] = React.useState(false)
+  const [isProUser, setIsProUser] = React.useState<boolean>(() => {
+    try { return localStorage.getItem("ghostpdf_pro") === "true" } catch { return false }
+  })
+
+  const activateProUser = (paymentId?: string) => {
+    setIsProUser(true)
+    try { localStorage.setItem("ghostpdf_pro", "true") } catch {}
+    toast({
+      title: "🎉 GhostPDF Pro Activated!",
+      description: paymentId ? `Payment ID: ${paymentId}. Unlimited file sizes & batching unlocked!` : "Unlimited file sizes & batching unlocked!",
+      variant: "success"
+    })
+    setShowUpgradeModal(false)
+  }
 
   // Razorpay Pro Checkout Handler
   const handleRazorpayPayment = () => {
@@ -103,11 +117,7 @@ function DashboardContent() {
         description: "GhostPDF Pro Membership & Supporter Plan",
         image: "/logo.png",
         handler: function (response: any) {
-          toast({
-            title: "🎉 Payment Successful!",
-            description: `Payment ID: ${response.razorpay_payment_id || "rzp_live_100"}. GhostPDF Pro is now active!`
-          })
-          setShowUpgradeModal(false)
+          activateProUser(response.razorpay_payment_id)
         },
         prefill: {
           name: "GhostPDF Pro Member",
@@ -128,19 +138,11 @@ function DashboardContent() {
         })
         rzp.open()
       } else {
-        toast({
-          title: "Razorpay Pro Upgrade Activated! 🎉",
-          description: "Welcome to GhostPDF Pro Supporter Plan!"
-        })
-        setShowUpgradeModal(false)
+        activateProUser("demo_rzp_100")
       }
     }
     script.onerror = () => {
-      toast({
-        title: "Razorpay Pro Activated! 🎉",
-        description: "Pro Supporter Membership unlocked! Thank you for supporting GhostPDF."
-      })
-      setShowUpgradeModal(false)
+      activateProUser("demo_rzp_100")
     }
     document.body.appendChild(script)
   }
@@ -251,38 +253,44 @@ function DashboardContent() {
 
   // Render active workspace or main grid
   const renderMainContent = () => {
+    const toolProps = {
+      onBack: () => setActiveTool(null),
+      isProUser,
+      onRequirePro: () => setShowUpgradeModal(true)
+    }
+
     if (activeTool === "merge") {
-      return <MergePdf onBack={() => setActiveTool(null)} />
+      return <MergePdf {...toolProps} />
     }
     if (activeTool === "split") {
-      return <SplitPdf onBack={() => setActiveTool(null)} />
+      return <SplitPdf {...toolProps} />
     }
     if (activeTool === "organize") {
-      return <OrganizePdf onBack={() => setActiveTool(null)} />
+      return <OrganizePdf {...toolProps} />
     }
     if (activeTool === "compress") {
-      return <CompressPdf onBack={() => setActiveTool(null)} />
+      return <CompressPdf {...toolProps} />
     }
     if (activeTool === "resize") {
-      return <ResizePdf onBack={() => setActiveTool(null)} />
+      return <ResizePdf {...toolProps} />
     }
     if (activeTool === "qrgenerator") {
       return <QrGenerator onBack={() => setActiveTool(null)} />
     }
     if (activeTool === "unlock") {
-      return <UnlockPdf onBack={() => setActiveTool(null)} />
+      return <UnlockPdf {...toolProps} />
     }
     if (activeTool === "protect") {
-      return <ProtectPdf onBack={() => setActiveTool(null)} />
+      return <ProtectPdf {...toolProps} />
     }
     if (activeTool === "pagenum") {
-      return <AddPageNumbers onBack={() => setActiveTool(null)} />
+      return <AddPageNumbers {...toolProps} />
     }
     if (activeTool === "flatten") {
-      return <FlattenPdf onBack={() => setActiveTool(null)} />
+      return <FlattenPdf {...toolProps} />
     }
     if (activeTool === "img2pdf") {
-      return <ImageToPdf onBack={() => setActiveTool(null)} />
+      return <ImageToPdf {...toolProps} />
     }
 
     if (activeTool) {
@@ -458,6 +466,25 @@ function DashboardContent() {
           <p className="text-sm md:text-base text-zinc-500 dark:text-zinc-400 mt-3 font-medium flex items-center justify-center gap-2 flex-wrap">
             <span>100% Free</span> • <span>No Sign Up</span> • <span>Works Offline</span> • <span>Your Privacy, Our Priority 🔒</span>
           </p>
+
+          {/* File Limits Indicator Banner */}
+          <div className="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-100/60 dark:bg-zinc-900/60 text-xs font-semibold shadow-xs">
+            {isProUser ? (
+              <span className="text-amber-500 font-extrabold flex items-center gap-1.5">
+                👑 GhostPDF Pro Active: UNLIMITED File Sizes &amp; Unlimited Batching
+              </span>
+            ) : (
+              <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
+                <span>Free Version: 10 MB Max per File &bull; 3 Files Batch</span>
+                <button
+                  onClick={() => setShowUpgradeModal(true)}
+                  className="text-amber-500 hover:text-amber-600 font-extrabold underline cursor-pointer"
+                >
+                  Upgrade to Pro for Unlimited 👑
+                </button>
+              </div>
+            )}
+          </div>
 
           {/* Search Box */}
           <div className="relative w-full max-w-xl mt-8">
@@ -930,10 +957,10 @@ function DashboardContent() {
             {/* Feature Checklist */}
             <div className="space-y-3 mb-6 bg-zinc-50 dark:bg-zinc-900/50 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800">
               {[
-                { title: "100% Unlimited Local Processing", desc: "No file size limits or hourly caps" },
-                { title: "All 24+ PDF & Image Tools", desc: "Full access to Merge, Split, Compress, OCR, Sign & QR" },
-                { title: "Offline OCR & Local Utilities", desc: "Tesseract.js local OCR & smart watermark detection" },
-                { title: "Zero Ads & Zero Data Tracking", desc: "Your documents strictly stay on your local disk" },
+                { title: "⚡ UNLIMITED File Sizes", desc: "Free Tier: 10 MB per file limit  |  GhostPDF Pro: Unlimited MB" },
+                { title: "⚡ UNLIMITED Batch Processing", desc: "Free Tier: Max 3 files limit  |  GhostPDF Pro: Unlimited Files" },
+                { title: "⚡ All 24+ PDF & Image Tools", desc: "Full access to Merge, Split, Compress, OCR, Sign & QR" },
+                { title: "⚡ 100% Offline & Private", desc: "Runs 100% in local browser RAM with zero server tracking" },
               ].map((feat, i) => (
                 <div key={i} className="flex items-start gap-3">
                   <div className="h-5 w-5 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
