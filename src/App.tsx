@@ -1106,13 +1106,15 @@ function DashboardContent() {
               </p>
             </div>
 
-            {/* Test Mode UPI Notice */}
-            <div className="mb-4 p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-left">
-              <p className="text-[11px] text-blue-700 dark:text-blue-300 leading-snug">
-                ⚠️ <strong>Razorpay Test Mode (`rzp_test`):</strong> Real UPI apps (PhonePe/GPay) cannot scan test sandbox QRs.
-                <br />
-                👉 <strong>To complete test checkout:</strong> Select <strong>Netbanking (Success)</strong>, <strong>Card (`4111 1111 1111 1111`)</strong>, or click <strong>Success</strong> in the popup!
+            {/* Test Mode Credentials Notice */}
+            <div className="mb-4 p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-left space-y-1.5">
+              <p className="text-[11px] font-bold text-blue-700 dark:text-blue-300">
+                🧪 Razorpay Test Mode Sandbox Credentials:
               </p>
+              <div className="text-[10px] text-zinc-700 dark:text-zinc-300 space-y-1 font-mono bg-blue-50/50 dark:bg-zinc-900/60 p-2 rounded-lg border border-blue-500/10">
+                <div>💳 <strong>Test Card:</strong> 4111 1111 1111 1111 &bull; CVV: 123 &bull; Exp: 12/26</div>
+                <div>📱 <strong>Test UPI:</strong> test@razorpay</div>
+              </div>
             </div>
 
             {/* Pricing Cards (3 Tiers: Free, Medium 12M, Pro 12M) */}
