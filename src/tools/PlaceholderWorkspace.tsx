@@ -48,18 +48,28 @@ export function PlaceholderWorkspace({ toolId, toolName, toolIcon, toolColor, on
     switch (toolId) {
       case "pdf2word":
         return ".docx"
+      case "word2pdf":
+      case "epub2pdf":
+      case "img2pdf":
+      case "jpg2pdf":
+        return ".pdf"
       case "pdf2jpg":
+      case "heic2jpg":
+      case "png2jfif":
         return ".jpg"
-      case "pdf2epub":
-        return ".epub"
+      case "pdf2png":
       case "webp2png":
       case "jfif2png":
-      case "heic2jpg":
+      case "svg2png":
         return ".png"
+      case "pdf2epub":
+        return ".epub"
       case "png2svg":
         return ".svg"
-      case "img2pdf":
-        return ".pdf"
+      case "png2webp":
+        return ".webp"
+      case "jpg2heic":
+        return ".heic"
       default:
         return originalExt || ".pdf"
     }

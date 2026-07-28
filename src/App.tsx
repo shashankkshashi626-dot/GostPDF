@@ -309,13 +309,20 @@ function DashboardContent() {
     { id: "ocr", name: "OCR", desc: "(Local with Tesseract.js) 👀", icon: "scantext", emoji: "👀", color: "text-rose-500", isActive: true },
     { id: "compress", name: "Compress PDF", desc: "(Canvas Render, Quality Slider) ✨", icon: "filedown", emoji: "✨", color: "text-purple-500", isActive: true },
     { id: "img2pdf", name: "Image to PDF", desc: "(JPG/PNG Local) 🖼️", icon: "fileimage", emoji: "🖼️", color: "text-emerald-400", isActive: true },
+    { id: "pdf2png", name: "PDF to PNG", desc: "(Local) 🖼️", icon: "fileimage", emoji: "🖼️", color: "text-rose-400", isActive: true },
     { id: "pdf2word", name: "PDF to Word", desc: "(DOCX difficult, with warning) ⚠️", icon: "filetext", emoji: "⚠️", color: "text-red-400", isActive: true },
+    { id: "word2pdf", name: "Word to PDF", desc: "(DOCX to PDF Local) 📄", icon: "filetext", emoji: "📄", color: "text-blue-500", isActive: true },
     { id: "pdf2jpg", name: "PDF to JPG", desc: "(Local) 🖼️", icon: "fileimage", emoji: "🖼️", color: "text-pink-500", isActive: true },
     { id: "pdf2epub", name: "PDF to EPUB", desc: "(Local) 📚", icon: "bookopen", emoji: "📚", color: "text-violet-500", isActive: true },
+    { id: "epub2pdf", name: "EPUB to PDF", desc: "(Local) 📚", icon: "bookopen", emoji: "📚", color: "text-indigo-500", isActive: true },
     { id: "webp2png", name: "WEBP to PNG", desc: "(Local) 🔄", icon: "refreshcw", emoji: "🔄", color: "text-sky-400", isActive: true },
+    { id: "png2webp", name: "PNG to WEBP", desc: "(Local) 🔄", icon: "refreshcw", emoji: "🔄", color: "text-emerald-500", isActive: true },
     { id: "jfif2png", name: "JFIF to PNG", desc: "(Local) 🔄", icon: "refreshcw", emoji: "🔄", color: "text-indigo-400", isActive: true },
+    { id: "png2jfif", name: "PNG to JFIF", desc: "(Local) 🔄", icon: "refreshcw", emoji: "🔄", color: "text-teal-400", isActive: true },
     { id: "png2svg", name: "PNG to SVG", desc: "(Local) 🎨", icon: "refreshcw", emoji: "🎨", color: "text-yellow-400", isActive: true },
+    { id: "svg2png", name: "SVG to PNG", desc: "(Local) 🎨", icon: "refreshcw", emoji: "🎨", color: "text-orange-400", isActive: true },
     { id: "heic2jpg", name: "HEIC to JPG/PNG", desc: "(Local) 📸", icon: "refreshcw", emoji: "📸", color: "text-blue-600", isActive: true },
+    { id: "jpg2heic", name: "JPG to HEIC", desc: "(Local) 📸", icon: "refreshcw", emoji: "📸", color: "text-purple-500", isActive: true },
     { id: "imageresize", name: "Image Resizer", desc: "(with caution for enlarged quality) ⚠️", icon: "image", emoji: "⚠️", color: "text-amber-600", isActive: true },
     { id: "cropimage", name: "Crop Image", desc: "(Local) ✂️", icon: "crop", emoji: "✂️", color: "text-red-600", isActive: true },
     { id: "unitconv", name: "Unit Converter", desc: "(Local) ⚖️", icon: "arrowleftright", emoji: "⚖️", color: "text-slate-500", isActive: true },
@@ -957,11 +964,16 @@ function DashboardContent() {
                   <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
                     {[
                       { id: "img2pdf", label: "Image to PDF 🖼️", color: "text-emerald-400" },
+                      { id: "pdf2png", label: "PDF to PNG 🖼️", color: "text-rose-400" },
                       { id: "pdf2jpg", label: "PDF to JPG 📸", color: "text-pink-500" },
                       { id: "webp2png", label: "WEBP to PNG 🔄", color: "text-sky-400" },
+                      { id: "png2webp", label: "PNG to WEBP 🔄", color: "text-emerald-500" },
                       { id: "jfif2png", label: "JFIF to PNG 🔄", color: "text-indigo-400" },
+                      { id: "png2jfif", label: "PNG to JFIF 🔄", color: "text-teal-400" },
                       { id: "heic2jpg", label: "HEIC to JPG 📷", color: "text-blue-600" },
+                      { id: "jpg2heic", label: "JPG to HEIC 📸", color: "text-purple-500" },
                       { id: "png2svg", label: "PNG to SVG 🎨", color: "text-yellow-400" },
+                      { id: "svg2png", label: "SVG to PNG 🎨", color: "text-orange-400" },
                       { id: "imageresize", label: "Image Resizer ⚠️", color: "text-amber-600" },
                       { id: "cropimage", label: "Crop Image ✂️", color: "text-red-600" },
                     ].map(item => (
@@ -997,7 +1009,9 @@ function DashboardContent() {
                   <div className="ml-4 pl-3 border-l border-zinc-200 dark:border-zinc-800 flex flex-col gap-1 mt-1">
                     {[
                       { id: "pdf2word", label: "PDF to Word ⚠️", color: "text-red-400" },
+                      { id: "word2pdf", label: "Word to PDF 📄", color: "text-blue-500" },
                       { id: "pdf2epub", label: "PDF to EPUB 📚", color: "text-violet-500" },
+                      { id: "epub2pdf", label: "EPUB to PDF 📚", color: "text-indigo-500" },
                       { id: "unitconv", label: "Unit Converter ⚖️", color: "text-slate-500" },
                       { id: "timeconv", label: "Time Converter 🕒", color: "text-slate-500" },
                     ].map(item => (
