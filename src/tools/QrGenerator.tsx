@@ -39,8 +39,8 @@ export function QrGenerator({ onBack }: { onBack: () => void }) {
   // Style states
   const [foregroundColor, setForegroundColor] = React.useState("#000000")
   const [backgroundColor, setBackgroundColor] = React.useState("#ffffff")
-  const [qrSize, setQrSize] = React.useState<number>(256)
   const [errorCorrection, setErrorCorrection] = React.useState<"L" | "M" | "Q" | "H">("H")
+  const qrSize = 300
   const [logoFile, setLogoFile] = React.useState<File | null>(null)
   const [logoImage, setLogoImage] = React.useState<HTMLImageElement | null>(null)
 
@@ -520,23 +520,6 @@ export function QrGenerator({ onBack }: { onBack: () => void }) {
                     className="h-9 px-3 flex-1 rounded-lg border border-zinc-200 dark:border-zinc-800 text-xs bg-white dark:bg-zinc-950 focus:outline-none font-semibold uppercase"
                   />
                 </div>
-              </div>
-
-              {/* Size slider */}
-              <div className="flex flex-col gap-2">
-                <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-zinc-800 dark:text-zinc-250">QR Code Size</label>
-                  <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">{qrSize} x {qrSize} px</span>
-                </div>
-                <input
-                  type="range"
-                  min="128"
-                  max="512"
-                  step="32"
-                  value={qrSize}
-                  onChange={(e) => setQrSize(parseInt(e.target.value, 10))}
-                  className="w-full h-1 bg-zinc-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-zinc-900 dark:accent-zinc-50"
-                />
               </div>
 
               {/* Error correction levels */}
