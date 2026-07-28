@@ -1239,7 +1239,14 @@ function DashboardContent() {
           <div className="relative w-full max-w-lg p-6 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl overflow-hidden">
             {/* Close Button */}
             <button
-              onClick={() => setShowUpgradeModal(false)}
+              onClick={() => {
+                setShowUpgradeModal(false)
+                toast({
+                  title: "Upgrade Cancelled ℹ️",
+                  description: "Upgrade window closed. You can upgrade to Pro anytime from the top navigation!",
+                  variant: "default"
+                })
+              }}
               className="absolute top-4 right-4 h-8 w-8 flex items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-500 transition-colors cursor-pointer"
             >
               <X className="h-4 w-4" />
@@ -1358,15 +1365,6 @@ function DashboardContent() {
               </button>
             </div>
 
-            {/* Modal Bottom Actions */}
-            <div className="mt-4 pt-3 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-end">
-              <button
-                onClick={() => setShowUpgradeModal(false)}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 transition-colors cursor-pointer"
-              >
-                Close ✖
-              </button>
-            </div>
           </div>
         </div>
       )}
