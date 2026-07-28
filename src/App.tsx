@@ -73,13 +73,14 @@ function DashboardContent() {
   const [activeTool, setActiveTool] = React.useState<string | null>(null)
   const [searchQuery, setSearchQuery] = React.useState("")
   const [activeMenu, setActiveMenu] = React.useState("all-tools")
-  const [viewMode, setViewMode] = React.useState<"vertical" | "horizontal">("vertical")
+  const [viewMode, setViewMode] = React.useState<"vertical" | "horizontal">("horizontal")
   const searchInputRef = React.useRef<HTMLInputElement>(null)
 
   // Tools Horizontal Slider ref & scroll states
   const sliderRef = React.useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = React.useState(false)
   const [canScrollRight, setCanScrollRight] = React.useState(true)
+  const [scrollProgress, setScrollProgress] = React.useState(0)
 
   // Drag-to-scroll tracking
   const [isMouseDown, setIsMouseDown] = React.useState(false)
@@ -92,6 +93,10 @@ function DashboardContent() {
     if (!el) return
     setCanScrollLeft(el.scrollLeft > 5)
     setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 5)
+    const maxScroll = el.scrollWidth - el.clientWidth
+    if (maxScroll > 0) {
+      setScrollProgress((el.scrollLeft / maxScroll) * 100)
+    }
   }, [])
 
   // Mouse wheel & resize horizontal scroll handler
@@ -710,6 +715,19 @@ function DashboardContent() {
                     )}
                   </div>
                 ))}
+              </div>
+
+              {/* Horizontal Scroll Track & Indicator */}
+              <div className="mt-3 px-2 flex items-center gap-3">
+                <div className="flex-1 bg-zinc-200 dark:bg-zinc-800/80 h-1.5 rounded-full overflow-hidden">
+                  <div
+                    className="bg-emerald-500 h-full transition-all duration-150 rounded-full"
+                    style={{ width: `${Math.max(15, Math.min(100, scrollProgress))}%` }}
+                  />
+                </div>
+                <span className="text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 shrink-0 select-none">
+                  Scroll for more →
+                </span>
               </div>
             </div>
           )}
